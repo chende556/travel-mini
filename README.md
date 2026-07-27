@@ -1,3 +1,5 @@
+[English](README.md) | [中文](README_zh.md)
+
 # Travel Mini 🚗✈️
 
 A WeChat Mini Program for trip planning and travel recording.
