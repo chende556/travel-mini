@@ -13,7 +13,9 @@ staticfiles/
 # macOS
 .DS_Store
 
-# Mini Program
+# Mini Program - sensitive files (use .example versions)
+miniprogram/app.js
+miniprogram/images/
 miniprogram/project.private.config.json
 
 # Plan files (personal data)
