@@ -1,0 +1,38 @@
+<!-- 费用汇总 -->
+<view class="container">
+  <view class="summary-header card">
+    <view class="summary-title">{{tripTitle}}</view>
+    <view class="total-row">
+      <view class="total-item">
+        <text class="total-num">¥{{totalCost}}</text>
+        <text class="total-label">总计</text>
+      </view>
+      <view class="total-divider"></view>
+      <view class="total-item">
+        <text class="total-num">¥{{perPersonCost}}</text>
+        <text class="total-label">人均（{{membersCount}}人）</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 按类目分组 -->
+  <view class="category-list">
+    <view class="category-card card" wx:for="{{categories}}" wx:key="type">
+      <view class="category-header">
+        <text class="category-icon">{{item.type === 'hotel' ? '🏨' : item.type === 'scenic' ? '🏞️' : item.type === 'restaurant' ? '🍽️' : item.type === 'transport' ? '🚗' : '🛍️'}}</text>
+        <text class="category-name">{{item.type_name}}</text>
+        <text class="category-total">¥{{item.total}}</text>
+      </view>
+      <view class="category-items">
+        <view class="cost-item" wx:for="{{item.items}}" wx:for-item="detail" wx:key="name">
+          <text class="cost-name">{{detail.name}}</text>
+          <text class="cost-amount">¥{{detail.cost}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{categories.length === 0 && !loading}}">
+    <text>还没有费用记录</text>
+  </view>
+</view>

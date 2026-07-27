@@ -1,0 +1,82 @@
+<!-- 行程详情 - 按天展示时间轴 -->
+<view class="container">
+  <!-- 行程标题 -->
+  <view class="trip-header card">
+    <view class="trip-title">{{trip.title}}</view>
+    <view class="trip-subtitle" wx:if="{{trip.destination}}">📍 {{trip.destination}}</view>
+    <view class="trip-subtitle">{{trip.start_date}} ~ {{trip.end_date}}</view>
+    <view class="trip-actions">
+      <view class="action-btn" bindtap="onEditTrip">✏️ 编辑</view>
+      <view class="action-btn danger" bindtap="onDeleteTrip">🗑️ 删除</view>
+      <view class="action-btn poster-btn" bindtap="onGeneratePoster">🖼️ 生成海报</view>
+      <view class="action-btn cost-btn" bindtap="onCostSummary">💰 费用汇总</view>
+    </view>
+  </view>
+
+  <!-- 每日时间轴 -->
+  <view class="timeline">
+    <view class="day-section" wx:for="{{trip.days}}" wx:key="id">
+      <!-- 天数标题 -->
+      <view class="day-header">
+        <view class="day-header-left">
+          <view class="day-badge">Day {{item.day_number}}</view>
+          <text class="day-date">{{item.date}}</text>
+        </view>
+      </view>
+
+      <!-- 地点列表 -->
+      <view class="place-list">
+        <view class="place-item card" wx:for="{{item.places}}" wx:for-item="place" wx:key="id" bindtap="onPlaceDetail" data-id="{{place.id}}">
+          <view class="place-type-icon">{{place.type === 'hotel' ? '🏨' : place.type === 'scenic' ? '🏞️' : place.type === 'restaurant' ? '🍽️' : place.type === 'transport' ? '🚗' : '🛍️'}}</view>
+          <view class="place-info">
+            <view class="place-name">{{place.name}}</view>
+            <view class="place-meta">
+              <text wx:if="{{place.start_time}}">{{place.start_time}}</text>
+              <text wx:if="{{place.end_time}}">-{{place.end_time}}</text>
+              <text wx:if="{{place.start_time && place.end_time}}"> ({{place.duration}})</text>
+              <text wx:if="{{place.address}}"> · {{place.address}}</text>
+              <text wx:if="{{place.cost}}"> · ¥{{place.cost}}</text>
+            </view>
+            <view class="place-location" wx:if="{{place.latitude}}" catchtap="onOpenMap" data-lat="{{place.latitude}}" data-lng="{{place.longitude}}" data-name="{{place.name}}" data-address="{{place.address}}">🗺️ 查看位置</view>
+          </view>
+          <view class="place-right">
+            <view class="place-photo-badge" wx:if="{{place.photo_count > 0}}">📷 {{place.photo_count}}</view>
+            <view class="place-order-btns" catchtap="">
+              <view class="order-btn" catchtap="onMoveUp" data-day-id="{{item.id}}" data-place-id="{{place.id}}" data-index="{{index}}">↑</view>
+              <view class="order-btn" catchtap="onMoveDown" data-day-id="{{item.id}}" data-place-id="{{place.id}}" data-index="{{index}}" data-total="{{item.places.length}}">↓</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 添加地点按钮 -->
+        <view class="add-place-btn" bindtap="onAddPlace" data-day-id="{{item.id}}">
+          <text>+ 添加地点</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评论区 -->
+  <view class="comment-section">
+    <view class="comment-title">💬 评论</view>
+    <view class="comment-input-row">
+      <input class="comment-input" placeholder="说点什么..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="onSendComment" />
+      <view class="comment-send" bindtap="onSendComment">发送</view>
+    </view>
+    <view class="comment-list">
+      <view class="comment-item" wx:for="{{comments}}" wx:key="id" bindtap="onReplyComment" data-name="{{item.nickname}}" bindlongpress="onDeleteComment" data-id="{{item.id}}">
+        <view class="comment-body">
+          <text class="comment-author">{{item.nickname || '匿名'}}：</text>
+          <text class="comment-content">{{item.content}}</text>
+          <text class="comment-time">{{item.created_at}}</text>
+        </view>
+      </view>
+      <view class="comment-empty" wx:if="{{comments.length === 0}}">
+        <text>还没有评论，来说点什么吧~</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 海报画布（隐藏） -->
+<canvas type="2d" id="posterCanvas" style="position:fixed;left:-9999px;width:750px;height:1200px;"></canvas>

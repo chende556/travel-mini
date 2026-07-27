@@ -1,0 +1,40 @@
+/* 表单样式 */
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+}
+
+.form-input {
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  padding: 16rpx 20rpx;
+  font-size: 28rpx;
+}
+
+.form-picker {
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  padding: 16rpx 20rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.form-textarea {
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  padding: 16rpx 20rpx;
+  font-size: 28rpx;
+  width: 100%;
+  min-height: 120rpx;
+  box-sizing: border-box;
+}
+
+.submit-btn {
+  margin-top: 40rpx;
+}

@@ -1,0 +1,24 @@
+<!-- 照片集 -->
+<view class="container">
+  <view class="page-title">{{tripTitle}} · 照片集</view>
+
+  <view class="day-group" wx:for="{{days}}" wx:key="day_number">
+    <view class="day-header">
+      <text class="day-badge">Day {{item.day_number}}</text>
+      <text class="day-date">{{item.date}}</text>
+    </view>
+
+    <view class="place-group" wx:for="{{item.places}}" wx:for-item="place" wx:key="place_name">
+      <view class="place-label">📍 {{place.place_name}}</view>
+      <view class="photo-grid">
+        <view class="photo-item" wx:for="{{place.photos}}" wx:for-item="photo" wx:key="id" bindtap="onPreview" data-day-index="{{index}}" data-place="{{place}}" data-photo-index="{{index}}">
+          <image src="{{photo.image_url}}" mode="aspectFill"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{days.length === 0 && !loading}}">
+    <text>还没有照片，去行程里上传吧</text>
+  </view>
+</view>

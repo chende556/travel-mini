@@ -1,0 +1,201 @@
+/* 行程详情页样式 */
+
+/* 顶部标题卡片 */
+.trip-header {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.trip-title {
+  font-size: 38rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 12rpx;
+}
+
+.trip-subtitle {
+  font-size: 26rpx;
+  color: #888;
+  margin-bottom: 6rpx;
+}
+
+.trip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.action-btn {
+  font-size: 22rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  background: #f8f8f8;
+  color: #666;
+  border: none;
+}
+
+.action-btn.danger {
+  color: #e64340;
+  background: #fef0f0;
+}
+
+.poster-btn {
+  color: #764ba2;
+  background: #f3e6ff;
+}
+
+.cost-btn {
+  color: #e67e22;
+  background: #fff8f0;
+}
+
+/* 时间轴 */
+.timeline {
+  padding-left: 8rpx;
+}
+
+.day-section {
+  margin-bottom: 36rpx;
+  position: relative;
+}
+
+.day-section::before {
+  content: '';
+  position: absolute;
+  left: 18rpx;
+  top: 50rpx;
+  bottom: 0;
+  width: 3rpx;
+  background: #e8e8e8;
+}
+
+.day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.day-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.day-badge {
+  background: linear-gradient(135deg, #07c160, #06ae56);
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: bold;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  margin-right: 16rpx;
+}
+
+.day-date {
+  font-size: 24rpx;
+  color: #aaa;
+}
+
+/* 地点列表 */
+.place-list {
+  padding-left: 40rpx;
+}
+
+.place-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #fff;
+  border-radius: 14rpx;
+  margin-bottom: 12rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.place-type-icon {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+}
+
+.place-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.place-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6rpx;
+}
+
+.place-meta {
+  font-size: 22rpx;
+  color: #aaa;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.place-location {
+  font-size: 22rpx;
+  color: #07c160;
+  margin-top: 6rpx;
+}
+
+.place-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8rpx;
+  margin-left: 12rpx;
+}
+
+.place-photo-badge {
+  font-size: 20rpx;
+  color: #07c160;
+  background: #e6f7ef;
+  padding: 4rpx 12rpx;
+  border-radius: 10rpx;
+}
+
+.place-order-btns {
+  display: flex;
+  gap: 6rpx;
+}
+
+.order-btn {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 50%;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.add-place-btn {
+  text-align: center;
+  padding: 20rpx;
+  color: #bbb;
+  font-size: 24rpx;
+  border: 2rpx dashed #e0e0e0;
+  border-radius: 14rpx;
+  margin-bottom: 10rpx;
+}

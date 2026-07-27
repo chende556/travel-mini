@@ -1,0 +1,147 @@
+/* 全局样式 */
+page {
+  background-color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.container {
+  padding: 20rpx;
+}
+
+/* 卡片样式 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 按钮样式 */
+.btn-primary {
+  background-color: #07c160;
+  color: #fff;
+  border-radius: 8rpx;
+  padding: 16rpx 32rpx;
+  text-align: center;
+  font-size: 28rpx;
+}
+
+.btn-secondary {
+  background-color: #fff;
+  color: #07c160;
+  border: 1rpx solid #07c160;
+  border-radius: 8rpx;
+  padding: 16rpx 32rpx;
+  text-align: center;
+  font-size: 28rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+  color: #999;
+}
+
+.empty-state .icon {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-state .text {
+  font-size: 28rpx;
+}
+
+/* 评论区通用样式 */
+.comment-section,
+.home-comment-section {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-top: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.comment-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+.comment-input-row {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.comment-input {
+  flex: 1;
+  background: #f5f5f5;
+  border-radius: 20rpx;
+  padding: 16rpx 24rpx;
+  font-size: 26rpx;
+}
+
+.comment-send {
+  background: #07c160;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 16rpx 24rpx;
+  border-radius: 20rpx;
+  white-space: nowrap;
+}
+
+.comment-list {
+  padding-top: 8rpx;
+}
+
+.comment-item {
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #f8f8f8;
+}
+
+.comment-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.comment-author {
+  font-size: 24rpx;
+  color: #576b95;
+  font-weight: 500;
+}
+
+.comment-bubble {
+  display: inline;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.comment-content {
+  font-size: 26rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+.comment-time {
+  font-size: 20rpx;
+  color: #ccc;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.comment-empty {
+  text-align: center;
+  padding: 30rpx;
+  color: #ccc;
+  font-size: 24rpx;
+}

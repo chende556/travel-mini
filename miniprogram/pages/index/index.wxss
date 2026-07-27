@@ -1,0 +1,391 @@
+/* 行程列表页样式 */
+.login-tip {
+  display: flex;
+  justify-content: center;
+  padding: 200rpx 40rpx;
+}
+
+/* 行程卡片 */
+.trip-card {
+  background: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+}
+
+.trip-cover {
+  width: 100%;
+  height: 220rpx;
+}
+
+/* 成员封面 */
+.members-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  height: auto;
+  padding: 30rpx 20rpx;
+}
+
+.members-row {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.member-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.member-avatar {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 50%;
+  border: 3rpx solid rgba(255, 255, 255, 0.8);
+}
+
+.member-name {
+  font-size: 20rpx;
+  color: #fff;
+  font-weight: bold;
+}
+
+.member-role {
+  font-size: 18rpx;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 行程信息 */
+.trip-info {
+  padding: 24rpx;
+}
+
+.trip-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 10rpx;
+}
+
+.trip-subtitle {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  font-size: 24rpx;
+  color: #888;
+  margin-bottom: 16rpx;
+}
+
+.trip-date {
+  color: #aaa;
+}
+
+/* 倒计时 */
+.countdown {
+  display: flex;
+  align-items: baseline;
+  padding: 18rpx 24rpx;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.countdown-num {
+  font-size: 56rpx;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 10rpx;
+}
+
+.countdown-text {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.countdown-now {
+  background: linear-gradient(135deg, #f9ca24, #f0932b);
+}
+
+.countdown-done {
+  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+}
+
+.countdown-done .countdown-text {
+  font-size: 26rpx;
+}
+
+/* 费用区 */
+.cost-section {
+  background: #fafafa;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.cost-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.cost-total {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #e64340;
+}
+
+.cost-avg {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.cost-types {
+  border-top: 1rpx solid #eee;
+  padding-top: 12rpx;
+}
+
+.cost-type-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8rpx 0;
+}
+
+.cost-type-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.cost-type-amount {
+  font-size: 24rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.cost-more-row {
+  margin-top: 12rpx;
+  text-align: right;
+}
+
+.cost-more {
+  font-size: 22rpx;
+  color: #07c160;
+}
+
+/* 快捷入口 */
+.quick-links {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.quick-link {
+  flex: 1;
+  text-align: center;
+  font-size: 22rpx;
+  color: #666;
+  background: #f5f5f5;
+  padding: 14rpx 0;
+  border-radius: 8rpx;
+}
+
+/* 照片精选 */
+.trip-photos {
+  border-top: 1rpx solid #f0f0f0;
+  padding-top: 16rpx;
+}
+
+.photos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.photos-title {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.photos-grid {
+  display: flex;
+  gap: 8rpx;
+}
+
+.photo-thumb {
+  position: relative;
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.photo-thumb image {
+  width: 100%;
+  height: 100%;
+}
+
+.photo-tag {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 18rpx;
+  text-align: center;
+  padding: 3rpx 0;
+}
+
+/* 新建行程按钮 */
+.add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 2rpx dashed #ccc;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-top: 10rpx;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.add-icon {
+  font-size: 36rpx;
+  margin-right: 10rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx;
+  color: #999;
+}
+
+/* 头像大图预览 */
+.preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.preview-image {
+  width: 80%;
+  height: 80%;
+}
+
+/* 选择昵称弹窗 */
+.nickname-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 998;
+}
+
+.nickname-modal {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  width: 80%;
+  text-align: center;
+}
+
+.nickname-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 10rpx;
+}
+
+.nickname-subtitle {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 30rpx;
+}
+
+.nickname-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.nickname-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 24rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.nickname-item:active {
+  background: #e6f7ef;
+  color: #07c160;
+}
+
+.nickname-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+}
+
+/* 注意事项 */
+.notice-section {
+  background: #fff8e6;
+  border: 2rpx solid #ffe58f;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.notice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.notice-title {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #d48806;
+}
+
+.notice-edit {
+  font-size: 22rpx;
+  color: #d48806;
+}
+
+.notice-content {
+  font-size: 26rpx;
+  color: #874d00;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.notice-empty {
+  font-size: 24rpx;
+  color: #d4b106;
+}

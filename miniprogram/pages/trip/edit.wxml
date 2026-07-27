@@ -1,0 +1,49 @@
+<!-- 创建/编辑行程 -->
+<view class="container">
+  <view class="form card">
+    <!-- 行程名称 -->
+    <view class="form-item">
+      <text class="form-label">行程名称 *</text>
+      <input class="form-input" placeholder="如：东京五日游" value="{{title}}" bindinput="onInputTitle" />
+    </view>
+
+    <!-- 目的地 -->
+    <view class="form-item">
+      <text class="form-label">目的地</text>
+      <input class="form-input" placeholder="如：日本东京" value="{{destination}}" bindinput="onInputDestination" />
+    </view>
+
+    <!-- 开始日期 -->
+    <view class="form-item">
+      <text class="form-label">开始日期 *</text>
+      <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+        <view class="form-picker">{{startDate || '请选择'}}</view>
+      </picker>
+    </view>
+
+    <!-- 结束日期 -->
+    <view class="form-item">
+      <text class="form-label">结束日期 *</text>
+      <picker mode="date" value="{{endDate}}" start="{{startDate}}" bindchange="onEndDateChange">
+        <view class="form-picker">{{endDate || '请选择'}}</view>
+      </picker>
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-item">
+      <text class="form-label">出行人数</text>
+      <input class="form-input" type="number" placeholder="1" value="{{membersCount}}" bindinput="onInputMembersCount" />
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-item">
+      <text class="form-label">备注</text>
+      <textarea class="form-textarea" placeholder="行程备注..." value="{{note}}" bindinput="onInputNote" />
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="btn-primary submit-btn" bindtap="onSubmit">
+    {{isEdit ? '保存修改' : '创建行程'}}
+  </view>
+</view>

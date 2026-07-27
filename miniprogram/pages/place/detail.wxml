@@ -1,0 +1,57 @@
+<!-- 地点详情 + 照片墙 -->
+<view class="container">
+  <!-- 地点信息 -->
+  <view class="place-header card">
+    <view class="place-type">{{place.type_display}}</view>
+    <view class="place-name">{{place.name}}</view>
+    <view class="place-address" wx:if="{{place.address}}">📍 {{place.address}}</view>
+    <view class="place-map-btn" wx:if="{{place.latitude}}" bindtap="onOpenMap">🗺️ 查看地图位置</view>
+    <view class="place-time" wx:if="{{place.start_time}}">🕐 {{place.start_time}} {{place.end_time ? '~ ' + place.end_time : ''}}</view>
+    <view class="place-cost" wx:if="{{place.cost}}">💰 ¥{{place.cost}}</view>
+    <view class="place-note" wx:if="{{place.note}}">{{place.note}}</view>
+    <view class="place-actions">
+      <view class="action-btn" bindtap="onEditPlace">✏️ 编辑</view>
+      <view class="action-btn danger" bindtap="onDeletePlace">🗑️ 删除</view>
+    </view>
+  </view>
+
+  <!-- 照片墙 -->
+  <view class="photo-section">
+    <view class="section-header">
+      <text class="section-title">📷 照片 ({{photos.length}})</text>
+      <view class="upload-btn" bindtap="onUploadPhoto">上传照片</view>
+    </view>
+
+    <view class="photo-grid" wx:if="{{photos.length > 0}}">
+      <view class="photo-item" wx:for="{{photos}}" wx:key="id">
+        <image src="{{item.image_url}}" mode="aspectFill" bindtap="onPreviewPhoto" data-index="{{index}}"></image>
+        <view class="photo-delete" catchtap="onDeletePhoto" data-id="{{item.id}}">×</view>
+      </view>
+    </view>
+
+    <view class="empty-photo" wx:else>
+      <text>还没有照片，点击上方按钮上传</text>
+    </view>
+  </view>
+
+  <!-- 评论区 -->
+  <view class="comment-section">
+    <view class="comment-title">💬 评论</view>
+    <view class="comment-input-row">
+      <input class="comment-input" placeholder="说点什么..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="onSendComment" />
+      <view class="comment-send" bindtap="onSendComment">发送</view>
+    </view>
+    <view class="comment-list">
+      <view class="comment-item" wx:for="{{comments}}" wx:key="id" bindtap="onReplyComment" data-name="{{item.nickname}}" bindlongpress="onDeleteComment" data-id="{{item.id}}">
+        <view class="comment-body">
+          <text class="comment-author">{{item.nickname || '匿名'}}：</text>
+          <text class="comment-content">{{item.content}}</text>
+          <text class="comment-time">{{item.created_at}}</text>
+        </view>
+      </view>
+      <view class="comment-empty" wx:if="{{comments.length === 0}}">
+        <text>还没有评论~</text>
+      </view>
+    </view>
+  </view>
+</view>

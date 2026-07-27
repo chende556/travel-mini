@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+travel_venv/
+db.sqlite3
+media/
+staticfiles/
+
+# Environment
+.env
+
+# macOS
+.DS_Store
+
+# Mini Program
+miniprogram/project.private.config.json
+
+# Plan files (personal data)
+plan/
+
+# Others
+*.log
+data.json
+qrcode.png

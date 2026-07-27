@@ -1,0 +1,152 @@
+<!-- 行程列表页 -->
+<view class="container">
+  <!-- 未登录提示 -->
+  <view class="login-tip" wx:if="{{!isLogin}}">
+    <button class="btn-primary" bindtap="onLogin">微信登录</button>
+  </view>
+
+  <!-- 行程列表 -->
+  <view wx:if="{{isLogin}}">
+    <!-- 行程卡片列表 -->
+    <view class="trip-list">
+      <view class="trip-card" wx:for="{{trips}}" wx:key="id" bindtap="onTripDetail" data-id="{{item.id}}">
+        <!-- 成员头像区 -->
+        <view class="trip-cover members-cover" wx:if="{{!item.cover_image_url}}">
+          <view class="members-row">
+            <view class="member-item" wx:for="{{members}}" wx:for-item="member" wx:key="id" catchtap="onMemberTap" data-member="{{member}}">
+              <image class="member-avatar" src="{{member.avatar_url || (member.nickname === '潮唧唧' ? '/images/1_jiji.jpg' : member.nickname === '飞机' ? '/images/2_feiji.jpg' : member.nickname === '宝哥' ? '/images/3_baoge.jpg' : member.nickname === '平胸' ? '/images/4_pingxion.jpg' : member.nickname === '老伍' ? '/images/5_xiaowu.jpg' : '/images/group-avatar.jpg')}}" mode="aspectFill"></image>
+              <text class="member-name">{{member.nickname}}</text>
+              <text class="member-role">{{member.role || ''}}</text>
+            </view>
+          </view>
+        </view>
+        <image class="trip-cover" wx:else src="{{item.cover_image_url}}" mode="aspectFill"></image>
+
+        <!-- 行程信息 -->
+        <view class="trip-info">
+          <view class="trip-title">{{item.title}}</view>
+          <view class="trip-subtitle">
+            <text wx:if="{{item.destination}}">📍 {{item.destination}}</text>
+            <text class="trip-date">🗓️ {{item.start_date}} ~ {{item.end_date}}</text>
+          </view>
+
+          <!-- 倒计时 -->
+          <view class="countdown" wx:if="{{item.countdown > 0}}">
+            <text class="countdown-num">{{item.countdown}}</text>
+            <text class="countdown-text">天后出发 🚗</text>
+          </view>
+          <view class="countdown countdown-now" wx:if="{{item.countdown === 0}}">
+            <text class="countdown-num">今天出发！</text>
+            <text class="countdown-text">🎉</text>
+          </view>
+          <view class="countdown countdown-done" wx:if="{{item.countdown < 0}}">
+            <text class="countdown-text">旅行已结束，美好回忆 ✨</text>
+          </view>
+
+          <!-- 费用区 -->
+          <view class="cost-section" wx:if="{{item.total_cost > 0}}">
+            <view class="cost-header">
+              <text class="cost-total">💰 ¥{{item.total_cost}}</text>
+              <text class="cost-avg">人均 ¥{{item.per_person_cost}}</text>
+            </view>
+            <view class="cost-types" wx:if="{{item.cost_by_type.length > 0}}">
+              <view class="cost-type-item" wx:for="{{item.cost_by_type}}" wx:for-item="ct" wx:key="type">
+                <text class="cost-type-label">{{ct.type === 'hotel' ? '🏨' : ct.type === 'scenic' ? '🏞️' : ct.type === 'restaurant' ? '🍽️' : ct.type === 'transport' ? '🚗' : '🛍️'}} {{ct.type_name}}</text>
+                <text class="cost-type-amount">¥{{ct.total}}</text>
+              </view>
+            </view>
+            <view class="cost-more-row" catchtap="onViewCost" data-id="{{item.id}}">
+              <text class="cost-more">查看明细 ></text>
+            </view>
+          </view>
+
+          <!-- 快捷入口 -->
+          <view class="quick-links">
+            <view class="quick-link" catchtap="onOpenDoc">📄 行程攻略</view>
+            <view class="quick-link" catchtap="onViewAllPhotos" data-id="{{item.id}}">📷 照片集</view>
+            <view class="quick-link" catchtap="onViewCost" data-id="{{item.id}}">💰 费用</view>
+          </view>
+
+          <!-- 注意事项 -->
+          <view class="notice-section" catchtap="onEditNotice" data-id="{{item.id}}" data-note="{{item.note}}">
+            <view class="notice-header">
+              <text class="notice-title">⚠️ 注意事项</text>
+              <text class="notice-edit">编辑</text>
+            </view>
+            <view class="notice-content" wx:if="{{item.note}}">
+              <text>{{item.note}}</text>
+            </view>
+            <view class="notice-empty" wx:else>
+              <text>点击添加注意事项（如：带好身份证、充电器...）</text>
+            </view>
+          </view>
+
+          <!-- 照片精选 -->
+          <view class="trip-photos" wx:if="{{item.recent_photos.length > 0}}">
+            <view class="photos-header">
+              <text class="photos-title">最近照片</text>
+            </view>
+            <view class="photos-grid">
+              <view class="photo-thumb" wx:for="{{item.recent_photos}}" wx:for-item="photo" wx:key="id" catchtap="onPreviewTripPhoto" data-photos="{{item.recent_photos}}" data-index="{{index}}">
+                <image src="{{photo.image_url}}" mode="aspectFill"></image>
+                <text class="photo-tag">Day{{photo.day_number}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评论区 -->
+    <view class="home-comment-section" wx:if="{{trips.length > 0}}">
+      <view class="comment-title">💬 大家说</view>
+      <view class="comment-input-row">
+        <input class="comment-input" placeholder="说点什么..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="onSendComment" />
+        <view class="comment-send" catchtap="onSendComment">发送</view>
+      </view>
+      <view class="comment-list">
+        <view class="comment-item" wx:for="{{comments}}" wx:key="id" bindtap="onReplyComment" data-name="{{item.nickname}}" bindlongpress="onDeleteComment" data-id="{{item.id}}" data-user="{{item.user}}">
+          <view class="comment-body">
+            <text class="comment-author">{{item.nickname || '匿名'}}：</text>
+            <text class="comment-content">{{item.content}}</text>
+            <text class="comment-time">{{item.created_at}}</text>
+          </view>
+        </view>
+        <view class="comment-empty" wx:if="{{comments.length === 0}}">
+          <text>还没有评论，来说点什么吧~</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 新建行程按钮（底部） -->
+    <view class="add-btn" bindtap="onAddTrip">
+      <text class="add-icon">+</text>
+      <text>新建行程</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{trips.length === 0 && !loading}}">
+      <text class="icon">✈️</text>
+      <text class="text">还没有行程，开始规划旅行吧！</text>
+    </view>
+  </view>
+</view>
+
+<!-- 头像大图预览 -->
+<view class="preview-overlay" wx:if="{{previewAvatar}}" catchtap="onClosePreview">
+  <image class="preview-image" src="{{previewAvatar}}" mode="aspectFit"></image>
+</view>
+
+<!-- 选择昵称弹窗 -->
+<view class="nickname-overlay" wx:if="{{showNicknamePicker}}">
+  <view class="nickname-modal">
+    <view class="nickname-title">你是谁？</view>
+    <view class="nickname-subtitle">选择你的名字</view>
+    <view class="nickname-list">
+      <view class="nickname-item" wx:for="{{nicknameOptions}}" wx:key="name" bindtap="onPickNickname" data-name="{{item.name}}">
+        <image class="nickname-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+</view>

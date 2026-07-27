@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>小程序功能介绍海报</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f0f0; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+.poster {
+  width: 500px;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+.header {
+  background: linear-gradient(135deg, #07c160 0%, #06ae56 100%);
+  padding: 40px 30px 50px;
+  color: #fff;
+  text-align: center;
+}
+.header-icon { font-size: 48px; margin-bottom: 12px; }
+.title { font-size: 22px; font-weight: bold; margin-bottom: 8px; }
+.subtitle { font-size: 13px; opacity: 0.85; line-height: 1.6; }
+.content { padding: 30px; }
+.section-title { font-size: 15px; font-weight: bold; color: #333; margin-bottom: 16px; }
+.feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.feature-icon.green { background: #e6f7ef; }
+.feature-icon.orange { background: #fff3e6; }
+.feature-icon.blue { background: #e6f0ff; }
+.feature-icon.purple { background: #f3e6ff; }
+.feature-icon.red { background: #ffe6e6; }
+.feature-icon.yellow { background: #fffbe6; }
+.feature-info { flex: 1; }
+.feature-name { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 2px; }
+.feature-desc { font-size: 12px; color: #999; line-height: 1.4; }
+.usage {
+  background: #f8f9fa;
+  margin: 0 30px;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.usage-title { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 12px; }
+.usage-step { font-size: 12px; color: #666; line-height: 2; }
+.footer {
+  padding: 24px 30px;
+  text-align: center;
+  border-top: 1px solid #f0f0f0;
+}
+.qrcode {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 12px;
+}
+.footer-text {
+  font-size: 14px;
+  color: #07c160;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.footer-note {
+  font-size: 11px;
+  color: #e64340;
+  margin-bottom: 8px;
+}
+.footer-slogan {
+  font-size: 12px;
+  color: #999;
+}
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="header">
+    <div class="header-icon">🚗</div>
+    <div class="title">中登老男人自驾游</div>
+    <div class="subtitle">小程序上线啦！<br>记录我们的疯狂之旅</div>
+  </div>
+  <div class="content">
+    <div class="section-title">✨ 功能亮点</div>
+    <div class="feature">
+      <div class="feature-icon green">📋</div>
+      <div class="feature-info">
+        <div class="feature-name">行程安排</div>
+        <div class="feature-desc">每天去哪、住哪、吃什么，按天按地点清晰展示</div>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon orange">💰</div>
+      <div class="feature-info">
+        <div class="feature-name">费用记录</div>
+        <div class="feature-desc">每个地点花费自动统计，总计和人均实时计算</div>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon blue">📷</div>
+      <div class="feature-info">
+        <div class="feature-name">打卡照片</div>
+        <div class="feature-desc">到一个地方拍照上传打卡，照片按天按地点自动归类</div>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon purple">🖼️</div>
+      <div class="feature-info">
+        <div class="feature-name">照片集回看</div>
+        <div class="feature-desc">旅行结束后统一浏览所有照片，回忆满满</div>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon red">🗺️</div>
+      <div class="feature-info">
+        <div class="feature-name">地图导航</div>
+        <div class="feature-desc">地点带定位，点击直接调起地图导航过去</div>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon yellow">⏰</div>
+      <div class="feature-info">
+        <div class="feature-name">出发倒计时</div>
+        <div class="feature-desc">首页大字显示距出发还有几天，越看越期待</div>
+      </div>
+    </div>
+  </div>
+  <div class="usage">
+    <div class="usage-title">📖 怎么用</div>
+    <div class="usage-step">
+      1. 打开小程序 → 看行程安排和倒计时<br>
+      2. 点进行程 → 查看每天具体安排<br>
+      3. 到了景点 → 点地点详情上传打卡照片<br>
+      4. 想看照片 → 首页点"查看更多"进照片集<br>
+      5. 想导航 → 点地点的"查看位置"打开地图
+    </div>
+  </div>
+  <div class="footer">
+    <img class="qrcode" src="qrcode.png" />
+    <div class="footer-text">扫码体验</div>
+    <div class="footer-note">⚠️ 仅限内部成员使用，需添加为体验成员才能打开</div>
+    <div class="footer-slogan">我和青春有个约定 · 2026</div>
+  </div>
+</div>
+</body>
+</html>
