@@ -39,8 +39,8 @@
             <text class="countdown-num">今天出发！</text>
             <text class="countdown-text">🎉</text>
           </view>
-          <view class="countdown countdown-done" wx:if="{{item.countdown < 0}}">
-            <text class="countdown-text">旅行已结束，美好回忆 ✨</text>
+          <view class="countdown countdown-done" wx:if="{{item.countdown < 0}}" catchtap="onEnterMemory" data-id="{{item.id}}">
+            <text class="countdown-text">✨ 进入回忆模式</text>
           </view>
 
           <!-- 费用区 -->

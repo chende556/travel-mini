@@ -8,7 +8,8 @@
     "pages/mine/index",
     "pages/webview/index",
     "pages/photos/index",
-    "pages/cost/index"
+    "pages/cost/index",
+    "pages/memory/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#07c160",

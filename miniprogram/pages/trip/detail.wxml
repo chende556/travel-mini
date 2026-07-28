@@ -37,6 +37,9 @@
               <text wx:if="{{place.address}}"> · {{place.address}}</text>
               <text wx:if="{{place.cost}}"> · ¥{{place.cost}}</text>
             </view>
+            <view class="place-weather-tag" wx:if="{{place.weather}}">
+              {{place.weather.text == '晴' ? '☀️' : place.weather.text == '多云' ? '⛅' : place.weather.text == '阴' ? '☁️' : place.weather.text == '小雨' ? '🌦️' : place.weather.text == '中雨' ? '🌧️' : place.weather.text == '大雨' ? '🌧️' : place.weather.text == '暴雨' ? '⛈️' : place.weather.text == '雷阵雨' ? '⛈️' : place.weather.text == '小雪' ? '🌨️' : place.weather.text == '雾' ? '🌫️' : '🌤️'}} {{place.weather.text}} {{place.weather.tempMin}}~{{place.weather.tempMax}}°C | 💧{{place.weather.humidity}}% | {{place.weather.windDir}}{{place.weather.windScale}}级
+            </view>
             <view class="place-location" wx:if="{{place.latitude}}" catchtap="onOpenMap" data-lat="{{place.latitude}}" data-lng="{{place.longitude}}" data-name="{{place.name}}" data-address="{{place.address}}">🗺️ 查看位置</view>
           </view>
           <view class="place-right">

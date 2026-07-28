@@ -171,6 +171,27 @@ class TripViewSet(viewsets.ModelViewSet):
                 day_number=i + 1,
             )
 
+    def perform_update(self, serializer):
+        trip = serializer.save()
+        from datetime import timedelta
+
+        new_days = (trip.end_date - trip.start_date).days + 1
+        existing_days = trip.days.all().order_by("day_number")
+        existing_count = existing_days.count()
+
+        if new_days < existing_count:
+            # 删除多余的 DayPlan（从后面删，保留前面的）
+            to_delete = existing_days.filter(day_number__gt=new_days)
+            to_delete.delete()
+        elif new_days > existing_count:
+            # 补充缺少的 DayPlan
+            for i in range(existing_count, new_days):
+                DayPlan.objects.get_or_create(
+                    trip=trip,
+                    day_number=i + 1,
+                    defaults={"date": trip.start_date + timedelta(days=i)},
+                )
+
 
 class DayPlanViewSet(viewsets.ModelViewSet):
     """每日计划"""
@@ -373,3 +394,209 @@ class CommentViewSet(viewsets.ModelViewSet):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied("只能删除自己的评论")
         instance.delete()
+
+
+@api_view(["GET"])
+def place_weather(request, place_id):
+    """查询地点天气预报（带缓存，6小时过期）"""
+    try:
+        place = Place.objects.get(id=place_id)
+    except Place.DoesNotExist:
+        return Response({"error": "地点不存在"}, status=status.HTTP_404_NOT_FOUND)
+
+    if not place.latitude or not place.longitude:
+        return Response({"error": "该地点没有坐标信息"}, status=status.HTTP_400_BAD_REQUEST)
+
+    weather = get_weather_by_location(place.longitude, place.latitude)
+    if weather is None:
+        return Response({"error": "天气服务不可用"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+    return Response({
+        "place_id": place.id,
+        "place_name": place.name,
+        "weather": weather
+    })
+
+
+@api_view(["GET"])
+def trip_weather(request, trip_id):
+    """批量获取行程所有有坐标地点的天气（用于 dayplan 列表显示）"""
+    try:
+        trip = Trip.objects.get(id=trip_id)
+    except Trip.DoesNotExist:
+        return Response({"error": "行程不存在"}, status=status.HTTP_404_NOT_FOUND)
+
+    places = Place.objects.filter(day_plan__trip=trip).exclude(latitude=None).exclude(longitude=None)
+    result = {}
+    for place in places:
+        weather = get_weather_by_location(place.longitude, place.latitude)
+        if weather:
+            result[place.id] = weather
+
+    return Response(result)
+
+
+def get_weather_by_location(longitude, latitude):
+    """获取天气数据（带缓存），返回天气字典或 None"""
+    from .models import WeatherCache
+    from django.utils import timezone
+    from datetime import timedelta
+
+    qweather_key = os.environ.get("QWEATHER_API_KEY", "")
+    qweather_host = os.environ.get("QWEATHER_API_HOST", "")
+    if not qweather_key or not qweather_host:
+        return None
+
+    # 坐标取两位小数作为缓存 key（同城市坐标接近，共享缓存）
+    location = f"{longitude:.2f},{latitude:.2f}"
+
+    # 查缓存
+    cache = WeatherCache.objects.filter(location=location).first()
+    if cache and (timezone.now() - cache.updated_at) < timedelta(hours=6):
+        return cache.data
+
+    # 调用 API
+    url = f"{qweather_host}/v7/weather/3d?location={location}&lang=zh"
+    try:
+        resp = requests.get(
+            url,
+            headers={"X-QW-Api-Key": qweather_key, "accept": "application/json"},
+            timeout=10
+        )
+        data = resp.json()
+    except Exception:
+        # API 调用失败，返回旧缓存（如果有）
+        if cache:
+            return cache.data
+        return None
+
+    if data.get("code") != "200":
+        if cache:
+            return cache.data
+        return None
+
+    daily = data.get("daily", [])
+    today = daily[0] if daily else {}
+    weather = {
+        "text": today.get("textDay", ""),
+        "textNight": today.get("textNight", ""),
+        "tempMax": today.get("tempMax", ""),
+        "tempMin": today.get("tempMin", ""),
+        "humidity": today.get("humidity", ""),
+        "windDir": today.get("windDirDay", ""),
+        "windScale": today.get("windScaleDay", ""),
+        "uvIndex": today.get("uvIndex", ""),
+    }
+
+    # 更新缓存
+    WeatherCache.objects.update_or_create(
+        location=location,
+        defaults={"data": weather}
+    )
+
+    return weather
+
+
+import os
+
+
+@api_view(["GET"])
+def trip_memory(request, trip_id):
+    """回忆模式数据：统计 + 所有照片 + 所有坐标点 + 成员"""
+    from django.db.models import Sum, Count
+    from django.conf import settings as django_settings
+
+    try:
+        trip = Trip.objects.get(id=trip_id)
+    except Trip.DoesNotExist:
+        return Response({"error": "行程不存在"}, status=status.HTTP_404_NOT_FOUND)
+
+    # 统计数据
+    days_count = trip.days.count()
+    places = Place.objects.filter(day_plan__trip=trip)
+    places_count = places.count()
+    photos = Photo.objects.filter(place__day_plan__trip=trip)
+    photos_count = photos.count()
+    total_cost = float(places.aggregate(total=Sum("cost"))["total"] or 0)
+    members_count = trip.members_count or 1
+    per_person_cost = round(total_cost / members_count, 2)
+
+    # 所有照片（按时间排序）
+    all_photos = []
+    for day in trip.days.all().order_by("day_number"):
+        for place in day.places.all().order_by("order", "start_time"):
+            for photo in place.photos.all().order_by("uploaded_at"):
+                all_photos.append({
+                    "id": photo.id,
+                    "image_url": f"{django_settings.SITE_URL}{photo.image.url}" if photo.image else "",
+                    "place_name": place.name,
+                    "day_number": day.day_number,
+                    "date": day.date.strftime("%Y-%m-%d"),
+                })
+
+    # 所有有坐标的地点（用于地图轨迹）
+    markers = []
+    for day in trip.days.all().order_by("day_number"):
+        for place in day.places.all().order_by("order", "start_time"):
+            if place.latitude and place.longitude:
+                # 从 address 提取城市名
+                city = ""
+                addr = place.address or ""
+                import re
+                m = re.search(r'(?:省|自治区)(.+?市)', addr)
+                if m:
+                    city = m.group(1).rstrip("市")
+                elif "市" in addr:
+                    m2 = re.search(r'(.+?)市', addr)
+                    if m2:
+                        city = m2.group(1)
+                if not city:
+                    city = place.name
+
+                markers.append({
+                    "id": place.id,
+                    "name": place.name,
+                    "city": city,
+                    "type": place.type,
+                    "latitude": place.latitude,
+                    "longitude": place.longitude,
+                    "day_number": day.day_number,
+                })
+
+    # 成员列表
+    order = ['潮唧唧', '飞机', '宝哥', '平胸', '老伍']
+    users = User.objects.filter(nickname__gt="")
+    user_map = {u.nickname: u for u in users}
+    members = []
+    for name in order:
+        u = user_map.get(name)
+        if u:
+            avatar_url = ""
+            if u.avatar:
+                avatar_url = f"{django_settings.SITE_URL}{u.avatar.url}"
+            members.append({
+                "nickname": u.nickname,
+                "role": u.role,
+                "avatar_url": avatar_url,
+            })
+
+    return Response({
+        "trip": {
+            "id": trip.id,
+            "title": trip.title,
+            "destination": trip.destination,
+            "start_date": trip.start_date.strftime("%Y-%m-%d"),
+            "end_date": trip.end_date.strftime("%Y-%m-%d"),
+        },
+        "stats": {
+            "days": days_count,
+            "places": places_count,
+            "photos": photos_count,
+            "total_cost": total_cost,
+            "per_person_cost": per_person_cost,
+            "members": members_count,
+        },
+        "photos": all_photos,
+        "markers": markers,
+        "members": members,
+    })

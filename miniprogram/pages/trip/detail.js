@@ -34,10 +34,34 @@ Page({
         })
       }
       this.setData({ trip: data })
+      // 加载天气
+      this.loadWeather()
     }).catch(err => {
       console.error('加载行程失败', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
     })
+  },
+
+  // 加载行程所有地点的天气
+  loadWeather() {
+    app.request({
+      url: `/trips/${this.data.tripId}/weather/`
+    }).then(weatherMap => {
+      // 把天气数据合并到 trip.days.places 里
+      const trip = this.data.trip
+      if (trip.days) {
+        trip.days.forEach(day => {
+          if (day.places) {
+            day.places.forEach(place => {
+              if (weatherMap[place.id]) {
+                place.weather = weatherMap[place.id]
+              }
+            })
+          }
+        })
+      }
+      this.setData({ trip })
+    }).catch(() => {})
   },
 
   // 计算时长

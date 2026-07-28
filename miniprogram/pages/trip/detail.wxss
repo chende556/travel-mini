@@ -151,6 +151,12 @@
   white-space: nowrap;
 }
 
+.place-weather-tag {
+  font-size: 20rpx;
+  color: #07c160;
+  margin-top: 4rpx;
+}
+
 .place-location {
   font-size: 22rpx;
   color: #07c160;

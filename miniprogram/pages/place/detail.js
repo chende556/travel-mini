@@ -6,7 +6,8 @@ Page({
     place: {},
     photos: [],
     comments: [],
-    commentText: ''
+    commentText: '',
+    weather: {}
   },
 
   onLoad(options) {
@@ -17,6 +18,7 @@ Page({
     this.loadPlace()
     this.loadPhotos()
     this.loadComments()
+    this.loadWeather()
   },
 
   loadPlace() {
@@ -25,6 +27,15 @@ Page({
     }).then(data => {
       this.setData({ place: data })
     })
+  },
+
+  // 加载实时天气
+  loadWeather() {
+    app.request({
+      url: `/places/${this.data.placeId}/weather/`
+    }).then(data => {
+      this.setData({ weather: data.weather || {} })
+    }).catch(() => {})
   },
 
   // 编辑地点

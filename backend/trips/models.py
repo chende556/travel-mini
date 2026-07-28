@@ -130,3 +130,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user.nickname}: {self.content[:20]}"
+
+
+class WeatherCache(models.Model):
+    """天气缓存，按坐标缓存天气预报，6小时过期"""
+    location = models.CharField(max_length=20, unique=True, verbose_name="坐标(经度,纬度)")
+    data = models.JSONField(verbose_name="天气数据")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
+
+    class Meta:
+        verbose_name = "天气缓存"
+        verbose_name_plural = "天气缓存"
+
+    def __str__(self):
+        return self.location

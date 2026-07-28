@@ -4,9 +4,13 @@
   <view class="place-header card">
     <view class="place-type">{{place.type_display}}</view>
     <view class="place-name">{{place.name}}</view>
-    <view class="place-address" wx:if="{{place.address}}">📍 {{place.address}}</view>
     <view class="place-map-btn" wx:if="{{place.latitude}}" bindtap="onOpenMap">🗺️ 查看地图位置</view>
-    <view class="place-time" wx:if="{{place.start_time}}">🕐 {{place.start_time}} {{place.end_time ? '~ ' + place.end_time : ''}}</view>
+    <view class="place-address" wx:if="{{place.address}}">📍 {{place.address}}</view>
+    <!-- 天气预报 -->
+    <view class="place-weather" wx:if="{{weather.text}}">
+      {{weather.text == '晴' ? '☀️' : weather.text == '多云' ? '⛅' : weather.text == '阴' ? '☁️' : weather.text == '小雨' ? '🌦️' : weather.text == '中雨' ? '🌧️' : weather.text == '大雨' ? '🌧️' : weather.text == '暴雨' ? '⛈️' : weather.text == '雷阵雨' ? '⛈️' : weather.text == '小雪' ? '🌨️' : weather.text == '雾' ? '🌫️' : '🌤️'}} {{weather.text}} {{weather.tempMin}}~{{weather.tempMax}}°C | 💧{{weather.humidity}}% | {{weather.windDir}} {{weather.windScale}}级 | UV {{weather.uvIndex}}
+    </view>
+    <view class="place-time" wx:if="{{place.start_time}}">🕐 {{place.start_time}} {{place.end_time ? ' ~ ' + place.end_time : ''}}</view>
     <view class="place-cost" wx:if="{{place.cost}}">💰 ¥{{place.cost}}</view>
     <view class="place-note" wx:if="{{place.note}}">{{place.note}}</view>
     <view class="place-actions">

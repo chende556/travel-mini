@@ -1,0 +1,248 @@
+/* 回忆模式页面 */
+.memory-page {
+  background: #1a1a2e;
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+/* 9宫格照片 */
+.photos-section {
+  margin: 20rpx;
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.photo-grid-item image {
+  width: 100%;
+  height: 230rpx;
+}
+
+.photos-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.page-btn {
+  color: #fff;
+  font-size: 24rpx;
+  padding: 8rpx 24rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20rpx;
+}
+
+.page-btn.disabled {
+  opacity: 0.3;
+}
+
+.page-info {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24rpx;
+}
+
+.slideshow-btn {
+  color: #fff;
+  font-size: 24rpx;
+  padding: 8rpx 24rpx;
+  background: #07c160;
+  border-radius: 20rpx;
+  margin-left: 10rpx;
+}
+
+/* 幻灯片全屏覆盖 */
+.slideshow-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slideshow-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.slideshow-image {
+  width: 100%;
+  height: 100%;
+}
+
+.slideshow-info {
+  position: absolute;
+  bottom: 120rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.slideshow-day {
+  background: #07c160;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+  font-weight: bold;
+}
+
+.slideshow-place {
+  color: #fff;
+  font-size: 28rpx;
+}
+
+.slideshow-close {
+  position: absolute;
+  bottom: 60rpx;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 24rpx;
+}
+
+/* 统计卡片 + 成员 */
+.stats-section {
+  margin: 30rpx 20rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20rpx;
+  padding: 36rpx;
+}
+
+.stats-title {
+  color: rgba(255,255,255,0.8);
+  font-size: 26rpx;
+  margin-bottom: 24rpx;
+  text-align: center;
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.stat-item {
+  text-align: center;
+  min-width: 100rpx;
+}
+
+.stat-number {
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.stat-label {
+  color: rgba(255,255,255,0.7);
+  font-size: 22rpx;
+  margin-top: 6rpx;
+}
+
+.members-in-stats {
+  margin-bottom: 24rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.15);
+}
+
+.stats-data {
+  padding-top: 0;
+}
+
+.members-list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.member-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.member-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  border: 3rpx solid rgba(255,255,255,0.3);
+}
+
+.member-name {
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.member-role {
+  color: rgba(255,255,255,0.6);
+  font-size: 18rpx;
+}
+
+/* 足迹路线图 */
+.map-section {
+  margin: 30rpx 20rpx;
+}
+
+.section-title {
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  padding-left: 10rpx;
+}
+
+.map-distance {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 26rpx;
+  margin-bottom: 24rpx;
+  padding-left: 10rpx;
+}
+
+.memory-map {
+  width: 100%;
+  height: 600rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+/* 海报按钮 */
+.poster-section {
+  margin: 40rpx 20rpx;
+}
+
+.poster-btn {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+  text-align: center;
+  padding: 24rpx;
+  border-radius: 50rpx;
+  font-size: 30rpx;
+  font-weight: bold;
+}
+
+/* Canvas 隐藏 */
+.poster-canvas {
+  position: fixed;
+  left: -9999px;
+  width: 750px;
+  height: 1334px;
+}

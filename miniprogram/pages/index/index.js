@@ -165,6 +165,8 @@ Page({
       this.setData({ trips, loading: false })
       // 加载评论
       this.loadComments()
+      // 检查是否需要弹出回忆引导
+      this.checkMemoryGuide(trips)
     }).catch(err => {
       console.error('加载失败', err)
       this.setData({ loading: false })
@@ -180,6 +182,39 @@ Page({
   onTripDetail(e) {
     const id = e.currentTarget.dataset.id
     wx.navigateTo({ url: `/pages/trip/detail?id=${id}` })
+  },
+
+  // 进入回忆模式
+  onEnterMemory(e) {
+    const id = e.currentTarget.dataset.id
+    wx.navigateTo({ url: `/pages/memory/index?id=${id}` })
+  },
+
+  // 检查是否弹出回忆引导（旅程结束后首次打开）
+  checkMemoryGuide(trips) {
+    const endedTrip = trips.find(t => t.countdown < 0)
+    if (!endedTrip) return
+
+    // 用 trip id + end_date 作为标记，每个行程只弹一次
+    const guideKey = `memory_guide_${endedTrip.id}`
+    if (wx.getStorageSync(guideKey)) return
+
+    const nickname = app.globalData.userInfo ? app.globalData.userInfo.nickname : ''
+    const greeting = nickname ? `你好 ${nickname}，` : ''
+
+    wx.showModal({
+      title: '旅途回忆 ✨',
+      content: `${greeting}这次旅途已经结束，美好的回忆值得珍藏。要查看旅途回忆吗？`,
+      confirmText: '进入回忆',
+      cancelText: '下次再说',
+      success: (res) => {
+        // 标记已弹过
+        wx.setStorageSync(guideKey, true)
+        if (res.confirm) {
+          wx.navigateTo({ url: `/pages/memory/index?id=${endedTrip.id}` })
+        }
+      }
+    })
   },
 
   // 点击头像放大查看

@@ -1,0 +1,95 @@
+<!-- 回忆模式页面 -->
+<view class="memory-page">
+
+  <!-- 照片展示：9宫格 + 翻页 + 幻灯片按钮 -->
+  <view class="photos-section">
+    <view class="photos-grid">
+      <view class="photo-grid-item" wx:for="{{currentPagePhotos}}" wx:key="id" bindtap="onPreviewPhoto" data-index="{{photoPageIndex * 9 + index}}">
+        <image src="{{item.image_url}}" mode="aspectFill"></image>
+      </view>
+    </view>
+    <view class="photos-controls">
+      <view class="page-btn {{photoPageIndex <= 0 ? 'disabled' : ''}}" bindtap="onPrevPage">上一页</view>
+      <text class="page-info">{{photoPageIndex + 1}} / {{totalPhotoPages}}</text>
+      <view class="page-btn {{photoPageIndex >= totalPhotoPages - 1 ? 'disabled' : ''}}" bindtap="onNextPage">下一页</view>
+      <view class="slideshow-btn" bindtap="onStartSlideshow">▶ 幻灯片</view>
+    </view>
+  </view>
+
+  <!-- 幻灯片模式（全屏覆盖） -->
+  <view class="slideshow-overlay" wx:if="{{showSlideshow}}" bindtap="onStopSlideshow">
+    <swiper class="slideshow-swiper" autoplay circular interval="3000" duration="800">
+      <swiper-item wx:for="{{photos}}" wx:key="id">
+        <image class="slideshow-image" src="{{item.image_url}}" mode="aspectFit"></image>
+        <view class="slideshow-info">
+          <text class="slideshow-day">Day {{item.day_number}}</text>
+          <text class="slideshow-place">{{item.place_name}}</text>
+        </view>
+      </swiper-item>
+    </swiper>
+    <view class="slideshow-close">点击任意位置退出</view>
+  </view>
+
+  <!-- 旅行伙伴 + 旅行数据（合并） -->
+  <view class="stats-section">
+    <!-- 旅行伙伴 -->
+    <view class="members-in-stats">
+      <view class="members-list">
+        <view class="member-item" wx:for="{{members}}" wx:key="nickname">
+          <image class="member-avatar" src="{{item.avatar_url || (item.nickname === '潮唧唧' ? '/images/1_jiji.jpg' : item.nickname === '飞机' ? '/images/2_feiji.jpg' : item.nickname === '宝哥' ? '/images/3_baoge.jpg' : item.nickname === '平胸' ? '/images/4_pingxion.jpg' : item.nickname === '老伍' ? '/images/5_xiaowu.jpg' : '/images/group-avatar.jpg')}}" mode="aspectFill"></image>
+          <view class="member-name">{{item.nickname}}</view>
+          <view class="member-role" wx:if="{{item.role}}">{{item.role}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 旅行数据 -->
+    <view class="stats-data">
+      <view class="stats-title">旅行数据</view>
+      <view class="stats-grid">
+        <view class="stat-item">
+          <view class="stat-number">{{stats.days}}</view>
+          <view class="stat-label">天</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-number">{{stats.places}}</view>
+          <view class="stat-label">地点</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-number">{{stats.photos}}</view>
+          <view class="stat-label">照片</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-number">¥{{stats.total_cost}}</view>
+          <view class="stat-label">总花费</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-number">¥{{stats.per_person_cost}}</view>
+          <view class="stat-label">人均</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 足迹路线图 -->
+  <view class="map-section" wx:if="{{markers.length > 0}}">
+    <view class="section-title">足迹路线</view>
+    <view class="map-distance" wx:if="{{totalDistance > 0}}">🚗 总行程约 {{totalDistance}} 公里</view>
+    <map class="memory-map"
+      latitude="{{mapCenter.latitude}}"
+      longitude="{{mapCenter.longitude}}"
+      markers="{{mapMarkers}}"
+      polyline="{{polyline}}"
+      scale="{{mapScale}}"
+      show-location="{{false}}">
+    </map>
+  </view>
+
+  <!-- 生成回忆海报按钮 -->
+  <view class="poster-section">
+    <view class="poster-btn" bindtap="onGeneratePoster">🎨 生成回忆海报</view>
+  </view>
+
+  <!-- Canvas（隐藏，用于绘制海报） -->
+  <canvas type="2d" id="posterCanvas" class="poster-canvas"></canvas>
+</view>

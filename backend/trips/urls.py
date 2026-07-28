@@ -21,6 +21,9 @@ urlpatterns = [
     path("photos/<int:pk>/", views.PhotoViewSet.as_view({"get": "retrieve", "delete": "destroy"}), name="photo-detail"),
     path("trips/<int:trip_id>/photos/", views.trip_photos, name="trip-photos"),
     path("trips/<int:trip_id>/cost-summary/", views.trip_cost_summary, name="trip-cost-summary"),
+    path("trips/<int:trip_id>/memory/", views.trip_memory, name="trip-memory"),
+    path("places/<int:place_id>/weather/", views.place_weather, name="place-weather"),
+    path("trips/<int:trip_id>/weather/", views.trip_weather, name="trip-weather"),
     path("comments/", views.CommentViewSet.as_view({"get": "list", "post": "create"}), name="comment-list"),
     path("comments/<int:pk>/", views.CommentViewSet.as_view({"delete": "destroy"}), name="comment-detail"),
 ]
