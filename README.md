@@ -15,8 +15,11 @@ Plan your trips, manage daily itineraries, upload photos, track costs, and share
 - **Cost Tracking** — Per-place cost, total & per-person auto-calculation
 - **Member System** — Custom avatars, roles (driver, navigator, etc.)
 - **Map & Navigation** — Choose location on map, open navigation
+- **Weather Forecast** — Real-time weather for each place (QWeather API, 6h cache)
+- **Memory Mode** — Post-trip photo gallery, route map, stats, shareable poster
+- **Route Map** — Polyline connecting all places with estimated driving distance
 - **Comments** — WeChat Moments-style comments with emoji
-- **Countdown** — Days until departure
+- **Countdown** — Days until departure, post-trip memory mode entry
 - **Trip Poster** — Canvas-generated shareable poster
 - **Shared Editing** — All members can add/edit places and photos
 
@@ -206,6 +209,8 @@ curl https://your-domain.com/api/v1/trips/
 | Method | Path | Description |
 |--------|------|-------------|
 | POST | /api/v1/auth/login/ | WeChat login |
+| POST | /api/v1/auth/profile/ | Update avatar & role |
+| GET | /api/v1/auth/members/ | List all members |
 | GET/POST | /api/v1/trips/ | List/Create trips |
 | GET/PUT/DELETE | /api/v1/trips/{id}/ | Trip detail |
 | GET/POST | /api/v1/trips/{id}/days/ | Day plans |
@@ -213,6 +218,13 @@ curl https://your-domain.com/api/v1/trips/
 | PUT/DELETE | /api/v1/places/{id}/ | Edit/Delete place |
 | POST | /api/v1/places/reorder/ | Reorder places |
 | GET/POST | /api/v1/places/{id}/photos/ | Photos |
+| DELETE | /api/v1/photos/{id}/ | Delete photo |
+| GET | /api/v1/trips/{id}/photos/ | All photos grouped by day |
+| GET | /api/v1/trips/{id}/cost-summary/ | Cost summary by type |
+| GET | /api/v1/trips/{id}/memory/ | Memory mode data |
+| GET | /api/v1/trips/{id}/weather/ | Batch weather for all places |
+| GET | /api/v1/places/{id}/weather/ | Weather for single place |
+| GET/POST | /api/v1/comments/ | Comments |
 
 ## License
 

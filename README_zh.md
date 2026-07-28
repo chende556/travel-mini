@@ -15,8 +15,11 @@
 - **费用记录** — 单项费用、总费用、人均自动计算
 - **成员系统** — 自定义头像、角色分工（司机、导航等）
 - **地图导航** — 地图选点、打开导航
+- **天气预报** — 每个地点实时天气（和风天气 API，6小时缓存）
+- **回忆模式** — 旅行结束后：9宫格照片+幻灯片、统计数据、足迹路线图、回忆海报
+- **足迹路线** — 地图连线展示行程轨迹，估算驾驶里程
 - **评论互动** — 朋友圈风格评论，支持 emoji
-- **出发倒计时** — 距出发天数醒目显示
+- **出发倒计时** — 距出发天数醒目显示，结束后进入回忆模式
 - **行程海报** — Canvas 绘制可分享海报
 - **共享编辑** — 所有成员都可添加/编辑地点和照片
 
@@ -206,6 +209,8 @@ curl https://你的域名/api/v1/trips/
 | 方法 | 路径 | 说明 |
 |------|------|------|
 | POST | /api/v1/auth/login/ | 微信登录 |
+| POST | /api/v1/auth/profile/ | 更新头像和角色 |
+| GET | /api/v1/auth/members/ | 成员列表 |
 | GET/POST | /api/v1/trips/ | 行程列表/创建 |
 | GET/PUT/DELETE | /api/v1/trips/{id}/ | 行程详情/编辑/删除 |
 | GET/POST | /api/v1/trips/{id}/days/ | 每日计划 |
@@ -213,6 +218,13 @@ curl https://你的域名/api/v1/trips/
 | PUT/DELETE | /api/v1/places/{id}/ | 编辑/删除地点 |
 | POST | /api/v1/places/reorder/ | 调整地点排序 |
 | GET/POST | /api/v1/places/{id}/photos/ | 照片列表/上传 |
+| DELETE | /api/v1/photos/{id}/ | 删除照片 |
+| GET | /api/v1/trips/{id}/photos/ | 按天按地点分组照片 |
+| GET | /api/v1/trips/{id}/cost-summary/ | 按类型费用汇总 |
+| GET | /api/v1/trips/{id}/memory/ | 回忆模式数据 |
+| GET | /api/v1/trips/{id}/weather/ | 批量天气查询 |
+| GET | /api/v1/places/{id}/weather/ | 单地点天气 |
+| GET/POST | /api/v1/comments/ | 评论 |
 
 ## 开源协议
 
