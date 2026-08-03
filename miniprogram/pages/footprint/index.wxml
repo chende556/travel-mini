@@ -1,0 +1,63 @@
+<!-- 全屏沉浸式足迹地图页面 -->
+<view class="footprint-full-page">
+
+  <!-- 全屏底层地图（隐藏默认地图地名POI，保留空白底图） -->
+  <map
+    id="footprintMap"
+    class="full-map"
+    latitude="{{mapLat}}"
+    longitude="{{mapLng}}"
+    scale="{{mapScale}}"
+    markers="{{activeMarkers}}"
+    enable-poi="{{false}}"
+    show-location="true"
+    bindmarkertap="onMarkerTap"
+  ></map>
+
+  <!-- 1. 顶部悬浮导航与 [已去] [待去] [点亮] 胶囊切换栏 -->
+  <view class="map-top-overlay" style="padding-top: {{statusBarHeight || 20}}px;">
+    <!-- 顶部标题 -->
+    <view class="top-nav-title">我的旅行足迹</view>
+
+    <!-- 3分段胶囊切换栏 -->
+    <view class="segmented-pill-tabs">
+      <view class="pill-tab {{activeTab === 'been' ? 'active' : ''}}" bindtap="onTabSwitch" data-tab="been">已去</view>
+      <view class="pill-tab {{activeTab === 'want' ? 'active' : ''}}" bindtap="onTabSwitch" data-tab="want">待去</view>
+      <view class="pill-tab {{activeTab === 'light' ? 'active' : ''}}" bindtap="onTabSwitch" data-tab="light">点亮</view>
+    </view>
+  </view>
+
+  <!-- 2. 右侧竖向工具栏 (定位、城市列表、分享) -->
+  <view class="map-right-tools">
+    <view class="tool-circle-btn" bindtap="onResetCenter" title="重新居中">
+      <text class="tool-icon svg-inline-icon icon-locate"></text>
+    </view>
+    <view class="tool-circle-btn" bindtap="onShowUnlockedCities" title="城市清单">
+      <text class="tool-icon svg-inline-icon icon-list"></text>
+    </view>
+    <view class="tool-circle-btn" bindtap="onShareFootprint" title="分享">
+      <text class="tool-icon svg-inline-icon icon-share"></text>
+    </view>
+  </view>
+
+  <!-- 3. 底部悬浮快捷新建行程大按钮 (+) -->
+  <view class="map-bottom-add" bindtap="onQuickAddTrip">
+    <view class="add-circle-btn">+</view>
+  </view>
+
+  <!-- 4. 已解锁城市弹窗抽屉 -->
+  <view class="cities-sheet-overlay" wx:if="{{showCitiesSheet}}" bindtap="onCloseCitiesSheet">
+    <view class="cities-sheet-card" catchtap="stopBubble">
+      <view class="sheet-header">
+        <text class="sheet-title"><text class="svg-inline-icon icon-city"></text> 已点亮城市清单 ({{stats.cities_count || 0}})</text>
+        <text class="sheet-close" bindtap="onCloseCitiesSheet">✕</text>
+      </view>
+      <view class="sheet-city-tags">
+        <view class="city-tag-item" wx:for="{{stats.cities_list}}" wx:key="*this">
+          <text class="svg-inline-icon icon-pin-small"></text> {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view>

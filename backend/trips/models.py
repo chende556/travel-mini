@@ -27,6 +27,8 @@ class Trip(models.Model):
     """行程"""
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trips", verbose_name="创建者")
+    members = models.ManyToManyField(User, related_name="joined_trips", verbose_name="成员", blank=True)
+    member_order = models.JSONField(default=list, verbose_name="成员排序", blank=True)
     title = models.CharField(max_length=100, verbose_name="行程名称")
     destination = models.CharField(max_length=100, blank=True, default="", verbose_name="目的地")
     start_date = models.DateField(verbose_name="开始日期")
@@ -44,6 +46,22 @@ class Trip(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class TripMember(models.Model):
+    """行程成员职责（每个行程中成员的独立职责）"""
+
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="trip_memberships")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trip_memberships")
+    role = models.CharField(max_length=64, blank=True, default="", verbose_name="职责")
+
+    class Meta:
+        verbose_name = "行程成员职责"
+        verbose_name_plural = "行程成员职责"
+        unique_together = ("trip", "user")
+
+    def __str__(self):
+        return f"{self.user.nickname} @ {self.trip.title} - {self.role}"
 
 
 class DayPlan(models.Model):
@@ -72,6 +90,9 @@ class Place(models.Model):
         ("scenic", "景点"),
         ("restaurant", "餐厅"),
         ("transport", "交通"),
+        ("drive", "自驾"),
+        ("flight", "飞机"),
+        ("train", "火车"),
         ("other", "其他"),
     ]
 
@@ -81,6 +102,16 @@ class Place(models.Model):
     address = models.CharField(max_length=200, blank=True, default="", verbose_name="地址")
     latitude = models.FloatField(blank=True, null=True, verbose_name="纬度")
     longitude = models.FloatField(blank=True, null=True, verbose_name="经度")
+
+    # 自驾/飞机/火车专属出发地与目的地路线信息
+    start_location = models.CharField(max_length=200, blank=True, default="", verbose_name="出发地")
+    start_latitude = models.FloatField(blank=True, null=True, verbose_name="出发地纬度")
+    start_longitude = models.FloatField(blank=True, null=True, verbose_name="出发地经度")
+    end_location = models.CharField(max_length=200, blank=True, default="", verbose_name="目的地")
+    end_latitude = models.FloatField(blank=True, null=True, verbose_name="目的地纬度")
+    end_longitude = models.FloatField(blank=True, null=True, verbose_name="目的地经度")
+    distance_km = models.FloatField(blank=True, null=True, verbose_name="导航距离(km)")
+
     start_time = models.TimeField(blank=True, null=True, verbose_name="开始时间")
     end_time = models.TimeField(blank=True, null=True, verbose_name="结束时间")
     cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="费用")
@@ -144,3 +175,38 @@ class WeatherCache(models.Model):
 
     def __str__(self):
         return self.location
+
+
+class Moment(models.Model):
+    """游记/朋友圈动态"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="moments", verbose_name="发布者")
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="moments", null=True, blank=True, verbose_name="关联行程")
+    content = models.TextField(blank=True, default="", verbose_name="动态内容")
+    images = models.JSONField(default=list, blank=True, verbose_name="图片列表")
+    location = models.CharField(max_length=100, blank=True, default="", verbose_name="位置名称")
+    likes = models.ManyToManyField(User, related_name="liked_moments", blank=True, verbose_name="点赞用户")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="发布时间")
+
+    class Meta:
+        verbose_name = "游记动态"
+        verbose_name_plural = "游记动态"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.nickname or '用户'}: {self.content[:20]}"
+
+
+class MomentComment(models.Model):
+    """游记动态评论"""
+    moment = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name="comments", verbose_name="动态")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="moment_comments", verbose_name="评论者")
+    content = models.TextField(verbose_name="评论内容")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="评论时间")
+
+    class Meta:
+        verbose_name = "动态评论"
+        verbose_name_plural = "动态评论"
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"{self.user.nickname}: {self.content[:20]}"

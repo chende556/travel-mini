@@ -21,7 +21,8 @@ Page({
   },
 
   onLoad(options) {
-    this.setData({ tripId: options.id })
+    const tripId = options.tripId || options.id
+    this.setData({ tripId })
     this.loadMemoryData()
   },
 
@@ -34,6 +35,7 @@ Page({
         stats: data.stats,
         photos: data.photos,
         markers: data.markers,
+        routeNodes: data.route_nodes || [],
         members: data.members
       })
       this.setupPhotoPages()
@@ -57,23 +59,23 @@ Page({
       )
     }
 
-    // 地图标记点
+    // 地图标记点（蓝色定位图标，与足迹页一致）
     const mapMarkers = markers.map((m, i) => ({
       id: m.id,
       latitude: m.latitude,
       longitude: m.longitude,
       title: m.city,
-      width: 20,
-      height: 20,
-      label: {
+      iconPath: '/images/marker-pin.png',
+      width: 24,
+      height: 24,
+      callout: {
         content: m.city,
-        fontSize: 12,
-        color: '#fff',
-        bgColor: 'rgba(64, 120, 240, 0.9)',
-        padding: 5,
-        borderRadius: 12,
-        anchorX: 0,
-        anchorY: -35
+        padding: 4,
+        borderRadius: 8,
+        display: 'ALWAYS',
+        fontSize: 11,
+        color: '#1e293b',
+        bgColor: '#ffffff'
       }
     }))
 
@@ -179,212 +181,5 @@ Page({
       current: urls[index],
       urls
     })
-  },
-
-  // 生成回忆海报
-  onGeneratePoster() {
-    wx.showLoading({ title: '生成中...' })
-
-    const query = wx.createSelectorQuery()
-    query.select('#posterCanvas')
-      .fields({ node: true, size: true })
-      .exec((res) => {
-        const canvas = res[0].node
-        const ctx = canvas.getContext('2d')
-        const width = 750
-        const height = 1334
-        canvas.width = width
-        canvas.height = height
-
-        this.drawPoster(ctx, canvas, width, height)
-      })
-  },
-
-  drawPoster(ctx, canvas, width, height) {
-    const { trip, stats, members } = this.data
-
-    // 背景渐变
-    const gradient = ctx.createLinearGradient(0, 0, 0, height)
-    gradient.addColorStop(0, '#1a1a2e')
-    gradient.addColorStop(0.5, '#16213e')
-    gradient.addColorStop(1, '#0f3460')
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, width, height)
-
-    // 标题
-    ctx.fillStyle = '#fff'
-    ctx.font = 'bold 48px sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText(trip.title || '我的旅行', width / 2, 120)
-
-    // 目的地
-    ctx.fillStyle = 'rgba(255,255,255,0.7)'
-    ctx.font = '28px sans-serif'
-    ctx.fillText(`📍 ${trip.destination || ''}`, width / 2, 180)
-
-    // 日期
-    ctx.fillText(`${trip.start_date} ~ ${trip.end_date}`, width / 2, 230)
-
-    // 统计数据区域
-    const statsY = 320
-    ctx.fillStyle = 'rgba(255,255,255,0.1)'
-    ctx.fillRect(40, statsY, width - 80, 200)
-
-    // 统计数据
-    ctx.fillStyle = '#fff'
-    ctx.font = 'bold 44px sans-serif'
-    ctx.textAlign = 'center'
-    const statItems = [
-      { value: `${stats.days}天`, x: width * 0.2 },
-      { value: `${stats.places}地点`, x: width * 0.4 },
-      { value: `${stats.photos}张`, x: width * 0.6 },
-      { value: `¥${stats.total_cost}`, x: width * 0.8 },
-    ]
-    statItems.forEach(item => {
-      ctx.fillText(item.value, item.x, statsY + 80)
-    })
-
-    ctx.fillStyle = 'rgba(255,255,255,0.6)'
-    ctx.font = '24px sans-serif'
-    const labels = ['行程', '打卡', '照片', '花费']
-    labels.forEach((label, i) => {
-      ctx.fillText(label, statItems[i].x, statsY + 130)
-    })
-
-    // 人均
-    ctx.fillStyle = '#f5576c'
-    ctx.font = 'bold 32px sans-serif'
-    ctx.fillText(`人均 ¥${stats.per_person_cost}`, width / 2, statsY + 180)
-
-    // 成员区域
-    const memberY = 600
-    ctx.fillStyle = '#fff'
-    ctx.font = 'bold 30px sans-serif'
-    ctx.fillText('旅行伙伴', width / 2, memberY)
-
-    // 绘制成员头像和名字
-    const memberCount = members.length
-    const avatarSize = 80
-    const startX = (width - memberCount * (avatarSize + 40)) / 2
-
-    let loadedCount = 0
-    const totalToLoad = memberCount
-
-    if (memberCount === 0) {
-      this.finishPoster(canvas, ctx, width, height, memberY)
-      return
-    }
-
-    members.forEach((member, i) => {
-      const x = startX + i * (avatarSize + 40) + avatarSize / 2
-      const y = memberY + 60
-
-      // 画圆形边框
-      ctx.beginPath()
-      ctx.arc(x, y + avatarSize / 2, avatarSize / 2 + 4, 0, Math.PI * 2)
-      ctx.fillStyle = 'rgba(255,255,255,0.3)'
-      ctx.fill()
-
-      // 加载头像图片
-      if (member.avatar_url) {
-        const img = canvas.createImage()
-        img.onload = () => {
-          ctx.save()
-          ctx.beginPath()
-          ctx.arc(x, y + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2)
-          ctx.clip()
-          ctx.drawImage(img, x - avatarSize / 2, y, avatarSize, avatarSize)
-          ctx.restore()
-
-          // 名字
-          ctx.fillStyle = '#fff'
-          ctx.font = '22px sans-serif'
-          ctx.textAlign = 'center'
-          ctx.fillText(member.nickname, x, y + avatarSize + 30)
-
-          // 职责
-          if (member.role) {
-            ctx.fillStyle = 'rgba(255,255,255,0.6)'
-            ctx.font = '18px sans-serif'
-            ctx.fillText(member.role, x, y + avatarSize + 58)
-          }
-
-          loadedCount++
-          if (loadedCount >= totalToLoad) {
-            this.finishPoster(canvas, ctx, width, height, memberY)
-          }
-        }
-        img.onerror = () => {
-          // 头像加载失败，画占位圆
-          ctx.beginPath()
-          ctx.arc(x, y + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2)
-          ctx.fillStyle = '#667eea'
-          ctx.fill()
-
-          ctx.fillStyle = '#fff'
-          ctx.font = '22px sans-serif'
-          ctx.textAlign = 'center'
-          ctx.fillText(member.nickname, x, y + avatarSize + 30)
-
-          loadedCount++
-          if (loadedCount >= totalToLoad) {
-            this.finishPoster(canvas, ctx, width, height, memberY)
-          }
-        }
-        img.src = member.avatar_url
-      } else {
-        // 无头像，画占位
-        ctx.beginPath()
-        ctx.arc(x, y + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2)
-        ctx.fillStyle = '#667eea'
-        ctx.fill()
-
-        ctx.fillStyle = '#fff'
-        ctx.font = '22px sans-serif'
-        ctx.textAlign = 'center'
-        ctx.fillText(member.nickname, x, y + avatarSize + 30)
-
-        if (member.role) {
-          ctx.fillStyle = 'rgba(255,255,255,0.6)'
-          ctx.font = '18px sans-serif'
-          ctx.fillText(member.role, x, y + avatarSize + 58)
-        }
-
-        loadedCount++
-        if (loadedCount >= totalToLoad) {
-          this.finishPoster(canvas, ctx, width, height, memberY)
-        }
-      }
-    })
-  },
-
-  finishPoster(canvas, ctx, width, height, memberY) {
-    // 底部 slogan
-    ctx.fillStyle = 'rgba(255,255,255,0.5)'
-    ctx.font = '26px sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText('我和青春有个约定', width / 2, height - 100)
-
-    ctx.fillStyle = 'rgba(255,255,255,0.3)'
-    ctx.font = '22px sans-serif'
-    ctx.fillText('— 用脚步丈量世界 —', width / 2, height - 60)
-
-    // 导出图片
-    setTimeout(() => {
-      wx.canvasToTempFilePath({
-        canvas,
-        success: (res) => {
-          wx.hideLoading()
-          wx.previewImage({
-            urls: [res.tempFilePath]
-          })
-        },
-        fail: (err) => {
-          wx.hideLoading()
-          console.error('生成海报失败', err)
-          wx.showToast({ title: '生成失败', icon: 'none' })
-        }
-      })
-    }, 500)
   }
 })

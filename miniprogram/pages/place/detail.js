@@ -70,6 +70,8 @@ Page({
           }).then(() => {
             wx.showToast({ title: '已删除', icon: 'success' })
             setTimeout(() => wx.navigateBack(), 1000)
+          }).catch(() => {
+            wx.showToast({ title: '删除失败', icon: 'none' })
           })
         }
       }
@@ -133,6 +135,8 @@ Page({
           }).then(() => {
             wx.showToast({ title: '已删除', icon: 'success' })
             this.loadPhotos()
+          }).catch(() => {
+            wx.showToast({ title: '删除失败', icon: 'none' })
           })
         }
       }

@@ -1,0 +1,234 @@
+/* ==========================================================================
+   全屏沉浸式足迹地图 - 莫兰迪视觉美学
+   ========================================================================== */
+
+/* SVG 内联图标 */
+.svg-inline-icon {
+  display: inline-block;
+  width: 32rpx;
+  height: 32rpx;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+}
+
+.icon-locate {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cline x1='12' y1='2' x2='12' y2='6'/%3E%3Cline x1='12' y1='18' x2='12' y2='22'/%3E%3Cline x1='2' y1='12' x2='6' y2='12'/%3E%3Cline x1='18' y1='12' x2='22' y2='12'/%3E%3C/svg%3E");
+}
+
+.icon-list {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='8' y1='6' x2='21' y2='6'/%3E%3Cline x1='8' y1='12' x2='21' y2='12'/%3E%3Cline x1='8' y1='18' x2='21' y2='18'/%3E%3Cline x1='3' y1='6' x2='3.01' y2='6'/%3E%3Cline x1='3' y1='12' x2='3.01' y2='12'/%3E%3Cline x1='3' y1='18' x2='3.01' y2='18'/%3E%3C/svg%3E");
+}
+
+.icon-share {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18' cy='5' r='3'/%3E%3Ccircle cx='6' cy='12' r='3'/%3E%3Ccircle cx='18' cy='19' r='3'/%3E%3Cline x1='8.59' y1='13.51' x2='15.42' y2='17.49'/%3E%3Cline x1='15.41' y1='6.51' x2='8.59' y2='10.49'/%3E%3C/svg%3E");
+}
+
+.icon-city {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234078F0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='1' y='6' width='9' height='16' rx='1'/%3E%3Cpath d='M10 2h4a1 1 0 0 1 1 1v18h-6V3a1 1 0 0 1 1-1z'/%3E%3Crect x='14' y='9' width='9' height='13' rx='1'/%3E%3C/svg%3E");
+}
+
+.icon-pin-small {
+  width: 24rpx;
+  height: 24rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234078F0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E");
+}
+
+page {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #fdfbf7;
+}
+
+.footprint-full-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 全屏地图 */
+.full-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* 1. 顶部悬浮区域 */
+.map-top-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20rpx;
+  background: linear-gradient(180deg, rgba(253, 251, 247, 0.92) 0%, rgba(253, 251, 247, 0) 100%);
+  pointer-events: none;
+}
+
+.top-nav-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #1e293b;
+  margin-top: 10rpx;
+  margin-bottom: 16rpx;
+  pointer-events: auto;
+}
+
+/* 3分段胶囊切换栏 */
+.segmented-pill-tabs {
+  pointer-events: auto;
+  display: flex;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 40rpx;
+  padding: 6rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
+}
+
+.pill-tab {
+  padding: 12rpx 36rpx;
+  font-size: 26rpx;
+  color: #64748b;
+  border-radius: 32rpx;
+  transition: all 0.25s ease;
+  font-weight: 500;
+}
+
+.pill-tab.active {
+  background: #8eaec7;
+  color: #ffffff;
+  font-weight: bold;
+  box-shadow: 0 4rpx 12rpx rgba(142, 174, 199, 0.35);
+}
+
+/* 2. 右侧竖向悬浮工具栏 */
+.map-right-tools {
+  position: absolute;
+  right: 28rpx;
+  top: 38%;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  z-index: 100;
+}
+
+.tool-circle-btn {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
+  transition: transform 0.15s ease;
+}
+
+.tool-circle-btn:active {
+  transform: scale(0.92);
+}
+
+.tool-icon {
+  width: 36rpx;
+  height: 36rpx;
+}
+
+/* 3. 底部悬浮快捷新建行程大按钮 (+) */
+.map-bottom-add {
+  position: absolute;
+  bottom: 120rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.add-circle-btn {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a3b899 0%, #8fa892 100%);
+  color: #ffffff;
+  font-size: 56rpx;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10rpx 28rpx rgba(163, 184, 153, 0.45);
+  border: 4rpx solid #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.add-circle-btn:active {
+  transform: scale(0.92);
+}
+
+/* 4. 城市列表抽屉 */
+.cities-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+}
+
+.cities-sheet-card {
+  width: 100%;
+  background: #ffffff;
+  border-top-left-radius: 36rpx;
+  border-top-right-radius: 36rpx;
+  padding: 36rpx;
+  box-sizing: border-box;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.sheet-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.sheet-close {
+  font-size: 32rpx;
+  color: #94a3b8;
+  padding: 10rpx;
+}
+
+.sheet-city-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  padding: 12rpx 0;
+}
+
+.city-tag-item {
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 26rpx;
+  font-weight: 500;
+  padding: 12rpx 28rpx;
+  border-radius: 30rpx;
+  border: 1rpx solid #e2e8f0;
+}

@@ -1,85 +1,235 @@
-<!-- 行程详情 - 按天展示时间轴 -->
+<!-- 自定义顶部导航栏 (含返回按钮) -->
+<view class="custom-nav-bar" style="padding-top: {{statusBarHeight || 20}}px; height: {{navHeight || 44}}px;">
+  <view class="nav-back-btn" bindtap="onNavBack">‹ 返回</view>
+  <view class="custom-nav-title">{{trip.title || '行程'}}</view>
+</view>
+<view style="height: {{(statusBarHeight || 20) + (navHeight || 44)}}px;"></view>
+
 <view class="container">
-  <!-- 行程标题 -->
-  <view class="trip-header card">
-    <view class="trip-title">{{trip.title}}</view>
-    <view class="trip-subtitle" wx:if="{{trip.destination}}">📍 {{trip.destination}}</view>
-    <view class="trip-subtitle">{{trip.start_date}} ~ {{trip.end_date}}</view>
-    <view class="trip-actions">
-      <view class="action-btn" bindtap="onEditTrip">✏️ 编辑</view>
-      <view class="action-btn danger" bindtap="onDeleteTrip">🗑️ 删除</view>
-      <view class="action-btn poster-btn" bindtap="onGeneratePoster">🖼️ 生成海报</view>
-      <view class="action-btn cost-btn" bindtap="onCostSummary">💰 费用汇总</view>
-    </view>
+  <!-- 顶部双切换标签：[ 行程简介 ] [ 行程详情 ] -->
+  <view class="segmented-tabs-container">
+    <view class="segmented-tab {{detailTab === 'summary' ? 'active' : ''}}" bindtap="onDetailTabChange" data-tab="summary">行程简介</view>
+    <view class="segmented-tab {{detailTab === 'detail' ? 'active' : ''}}" bindtap="onDetailTabChange" data-tab="detail">行程详情</view>
   </view>
 
-  <!-- 每日时间轴 -->
-  <view class="timeline">
-    <view class="day-section" wx:for="{{trip.days}}" wx:key="id">
-      <!-- 天数标题 -->
-      <view class="day-header">
-        <view class="day-header-left">
-          <view class="day-badge">Day {{item.day_number}}</view>
-          <text class="day-date">{{item.date}}</text>
+  <!-- 1. 行程简介 (基础概览、行程成员、注意事项、行程讨论) -->
+  <block wx:if="{{detailTab === 'summary'}}">
+    <!-- 如果是已完成行程，展示专属【旅行回忆】重温横幅 -->
+    <view class="memory-banner-card card" bindtap="onGoToMemory" wx:if="{{trip.status === 'completed' || isCompleted}}">
+      <view class="memory-banner-left">
+        <text class="memory-banner-icon">🎬</text>
+        <view class="memory-banner-texts">
+          <text class="memory-banner-title">重温旅行回忆 ›</text>
+          <text class="memory-banner-sub">回炼时光流影，生成专属足迹胶片</text>
         </view>
       </view>
+      <text class="memory-banner-arrow">点击进入 ›</text>
+    </view>
 
-      <!-- 地点列表 -->
-      <view class="place-list">
-        <view class="place-item card" wx:for="{{item.places}}" wx:for-item="place" wx:key="id" bindtap="onPlaceDetail" data-id="{{place.id}}">
-          <view class="place-type-icon">{{place.type === 'hotel' ? '🏨' : place.type === 'scenic' ? '🏞️' : place.type === 'restaurant' ? '🍽️' : place.type === 'transport' ? '🚗' : '🛍️'}}</view>
-          <view class="place-info">
-            <view class="place-name">{{place.name}}</view>
-            <view class="place-meta">
-              <text wx:if="{{place.start_time}}">{{place.start_time}}</text>
-              <text wx:if="{{place.end_time}}">-{{place.end_time}}</text>
-              <text wx:if="{{place.start_time && place.end_time}}"> ({{place.duration}})</text>
-              <text wx:if="{{place.address}}"> · {{place.address}}</text>
-              <text wx:if="{{place.cost}}"> · ¥{{place.cost}}</text>
-            </view>
-            <view class="place-weather-tag" wx:if="{{place.weather}}">
-              {{place.weather.text == '晴' ? '☀️' : place.weather.text == '多云' ? '⛅' : place.weather.text == '阴' ? '☁️' : place.weather.text == '小雨' ? '🌦️' : place.weather.text == '中雨' ? '🌧️' : place.weather.text == '大雨' ? '🌧️' : place.weather.text == '暴雨' ? '⛈️' : place.weather.text == '雷阵雨' ? '⛈️' : place.weather.text == '小雪' ? '🌨️' : place.weather.text == '雾' ? '🌫️' : '🌤️'}} {{place.weather.text}} {{place.weather.tempMin}}~{{place.weather.tempMax}}°C | 💧{{place.weather.humidity}}% | {{place.weather.windDir}}{{place.weather.windScale}}级
-            </view>
-            <view class="place-location" wx:if="{{place.latitude}}" catchtap="onOpenMap" data-lat="{{place.latitude}}" data-lng="{{place.longitude}}" data-name="{{place.name}}" data-address="{{place.address}}">🗺️ 查看位置</view>
+    <!-- 基础概览卡片 (支持向右滑动露出行程管理按钮) -->
+    <view class="overview-swipe-container">
+      <!-- 被盖在背后的操作按钮区 (向右滑动后露出) -->
+      <view class="overview-behind-actions" wx:if="{{isCreator}}">
+        <view class="swipe-btn edit-btn" bindtap="onEditTrip">✏️ 编辑</view>
+        <view class="swipe-btn delete-btn" bindtap="onDeleteTrip">🗑️ 删除</view>
+      </view>
+
+      <!-- 前景主卡片 (可向右拖动滑动) -->
+      <view class="trip-header card overview-front-card" 
+            bindtouchstart="onOverviewTouchStart" 
+            bindtouchmove="onOverviewTouchMove" 
+            bindtouchend="onOverviewTouchEnd" 
+            style="transform: translateX({{overviewSwipeX || 0}}px);">
+        <view class="trip-title-header">
+          <text class="trip-title">{{trip.title}}</text>
+        </view>
+
+        <view class="trip-subtitle" wx:if="{{trip.destination}}"><text class="svg-inline-icon icon-pin"></text>{{trip.destination}}</view>
+        <view class="trip-subtitle"><text class="svg-inline-icon icon-calendar"></text>{{trip.start_date}} ~ {{trip.end_date}}</view>
+
+        <!-- 费用汇总与【费用明细】入口 (人均右侧) -->
+        <view class="cost-summary-box">
+          <text class="cost-item"><text class="svg-inline-icon icon-wallet"></text>总额 ¥{{trip.total_cost || 0}}</text>
+          <text class="cost-item"><text class="svg-inline-icon icon-user"></text>人均 ¥{{trip.per_person_cost || 0}}</text>
+          <text class="cost-detail-link" bindtap="onCostSummary">费用明细 ›</text>
+        </view>
+
+        <!-- 快捷入口行 -->
+        <view class="quick-links-row">
+          <view class="quick-link-item" bindtap="onViewPhotos">
+            <text class="svg-inline-icon icon-camera"></text>
+            <text>照片相册</text>
+            <text class="quick-link-arrow">›</text>
           </view>
-          <view class="place-right">
-            <view class="place-photo-badge" wx:if="{{place.photo_count > 0}}">📷 {{place.photo_count}}</view>
-            <view class="place-order-btns" catchtap="">
-              <view class="order-btn" catchtap="onMoveUp" data-day-id="{{item.id}}" data-place-id="{{place.id}}" data-index="{{index}}">↑</view>
-              <view class="order-btn" catchtap="onMoveDown" data-day-id="{{item.id}}" data-place-id="{{place.id}}" data-index="{{index}}" data-total="{{item.places.length}}">↓</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 行程成员 (点击头像直接放大预览 / 点击名称改职责) -->
+    <view class="members-card card">
+      <view class="card-title-row">
+        <text class="card-title"><text class="svg-inline-icon icon-users"></text>行程成员</text>
+        <text class="card-tip">点击头像直接放大 / 点击名称修改职责</text>
+      </view>
+
+      <scroll-view class="members-row-scroll" scroll-x="{{draggingIndex < 0 || draggingIndex === undefined}}" enable-flex="{{true}}">
+        <view class="members-row-container">
+          <view class="member-compact-item {{draggingIndex === index ? 'dragging' : ''}}" 
+                wx:for="{{trip.trip_members}}" 
+                wx:key="id" 
+                bindtap="onMemberClick" 
+                bindtouchstart="onAvatarTouchStart" 
+                bindtouchmove="onAvatarTouchMove" 
+                bindtouchend="onAvatarTouchEnd" 
+                data-member="{{item}}" 
+                data-index="{{index}}">
+            <view class="avatar-wrap">
+              <image class="member-avatar-small" src="{{item.avatar_url || (item.nickname === '潮唧唧' ? '/images/1_jiji.jpg' : item.nickname === '飞机' ? '/images/2_feiji.jpg' : item.nickname === '宝哥' ? '/images/3_baoge.jpg' : item.nickname === '平胸' ? '/images/4_pingxion.jpg' : '/images/default-avatar.jpg')}}" mode="aspectFill"></image>
             </view>
+            <text class="member-name-small">{{item.nickname || '队友'}}</text>
+            <text class="member-role-tag-small" wx:if="{{item.role}}">{{item.role}}</text>
+          </view>
+
+          <!-- 最右侧 + 邀请按钮 -->
+          <view class="member-compact-item" bindtap="onShareTrip" wx:if="{{isCreator}}">
+            <view class="avatar-wrap add-avatar-wrap">
+              <text class="add-plus-icon">+</text>
+            </view>
+            <text class="member-name-small">邀请队友</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 注意事项 -->
+    <view class="notice-card card" bindtap="onEditNotice" data-id="{{trip.id}}" data-note="{{trip.note}}">
+      <view class="notice-header">
+        <text class="notice-title">⚠️ 注意事项</text>
+        <text class="notice-edit">编辑</text>
+      </view>
+      <view class="notice-content" wx:if="{{trip.note}}">
+        <text>{{trip.note}}</text>
+      </view>
+      <view class="notice-empty" wx:else>
+        <text>点击添加注意事项（带好身份证、充电器...）</text>
+      </view>
+    </view>
+
+    <!-- 行程讨论/评论区 (行程简介底部保留) -->
+    <view class="comment-section card">
+      <view class="comment-title">💬 行程讨论</view>
+      <view class="comment-input-row">
+        <input class="comment-input" placeholder="说点什么..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="onSendComment" />
+        <view class="comment-send" bindtap="onSendComment">发送</view>
+      </view>
+      <view class="comment-list">
+        <view class="comment-item" wx:for="{{comments}}" wx:key="id" bindtap="onReplyComment" data-name="{{item.nickname}}" bindlongpress="onDeleteComment" data-id="{{item.id}}">
+          <view class="comment-body">
+            <text class="comment-author">{{item.nickname || '匿名'}}：</text>
+            <text class="comment-content">{{item.content}}</text>
+            <text class="comment-time">{{item.created_at}}</text>
+          </view>
+        </view>
+        <view class="comment-empty" wx:if="{{comments.length === 0}}">
+          <text>还没有讨论，大家来说点什么吧~</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 2. 行程详情 (每日时间轴 Day1, Day2...) -->
+  <block wx:if="{{detailTab === 'detail'}}">
+    <view class="timeline">
+      <view class="day-section" wx:for="{{trip.days}}" wx:key="id">
+        <!-- 天数标题 (支持点击折叠/展开) -->
+        <view class="day-header" bindtap="toggleDay" data-index="{{index}}">
+          <view class="day-header-left">
+            <view class="day-badge">Day {{item.day_number}}</view>
+            <text class="day-date">{{item.date}}</text>
+          </view>
+          <view class="day-header-right">
+            <text class="day-places-count" wx:if="{{item.places}}">{{item.places.length}}个打卡点</text>
+            <text class="day-fold-icon">{{item.expanded ? '︿ 收起' : '﹀ 展开'}}</text>
           </view>
         </view>
 
-        <!-- 添加地点按钮 -->
-        <view class="add-place-btn" bindtap="onAddPlace" data-day-id="{{item.id}}">
-          <text>+ 添加地点</text>
-        </view>
-      </view>
-    </view>
-  </view>
+        <!-- 地点列表 (仅在 expanded 为 true 时展开，支持向右滑动管理) -->
+        <view class="place-list" wx:if="{{item.expanded}}">
+          <view class="place-swipe-container" wx:for="{{item.places}}" wx:for-item="place" wx:for-index="pIdx" wx:key="id">
+            <!-- 被盖在背后的操作按钮区 (向右滑动后露出) -->
+            <view class="place-behind-actions" wx:if="{{isCreator}}">
+              <view class="place-swipe-btn edit-btn" catchtap="onEditPlace" data-id="{{place.id}}">✏️ 编辑</view>
+              <view class="place-swipe-btn delete-btn" catchtap="onDeletePlace" data-id="{{place.id}}">🗑️ 删除</view>
+            </view>
 
-  <!-- 评论区 -->
-  <view class="comment-section">
-    <view class="comment-title">💬 评论</view>
-    <view class="comment-input-row">
-      <input class="comment-input" placeholder="说点什么..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="onSendComment" />
-      <view class="comment-send" bindtap="onSendComment">发送</view>
-    </view>
-    <view class="comment-list">
-      <view class="comment-item" wx:for="{{comments}}" wx:key="id" bindtap="onReplyComment" data-name="{{item.nickname}}" bindlongpress="onDeleteComment" data-id="{{item.id}}">
-        <view class="comment-body">
-          <text class="comment-author">{{item.nickname || '匿名'}}：</text>
-          <text class="comment-content">{{item.content}}</text>
-          <text class="comment-time">{{item.created_at}}</text>
+            <!-- 前景打卡点主卡片 (可向右拖动滑动) -->
+            <view class="place-item card place-front-card" 
+                  bindtap="onPlaceDetail" 
+                  bindtouchstart="onPlaceTouchStart" 
+                  bindtouchmove="onPlaceTouchMove" 
+                  bindtouchend="onPlaceTouchEnd" 
+                  data-day-index="{{index}}" 
+                  data-place-index="{{pIdx}}" 
+                  data-id="{{place.id}}" 
+                  style="transform: translateX({{place.swipeX || 0}}px);">
+              <view class="place-type-icon {{place.type || 'scenic'}}"></view>
+              <view class="place-info">
+                <view class="place-name">{{place.name}}</view>
+                <view class="place-meta">
+                  <text wx:if="{{place.start_time}}">{{place.start_time}}</text>
+                  <text wx:if="{{place.end_time}}">-{{place.end_time}}</text>
+                  <text wx:if="{{place.start_time && place.end_time}}"> ({{place.duration}})</text>
+                  <text wx:if="{{place.address}}"> · {{place.address}}</text>
+                  <text wx:if="{{place.cost}}"> · ¥{{place.cost}}</text>
+                </view>
+                <view class="place-weather-tag" wx:if="{{place.weather}}">
+                  {{place.weather.text == '晴' ? '☀️' : place.weather.text == '多云' ? '⛅' : place.weather.text == '阴' ? '☁️' : place.weather.text == '小雨' ? '🌦️' : place.weather.text == '中雨' ? '🌧️' : place.weather.text == '大雨' ? '🌧️' : place.weather.text == '暴雨' ? '⛈️' : place.weather.text == '雷阵雨' ? '⛈️' : place.weather.text == '小雪' ? '🌨️' : place.weather.text == '雾' ? '🌫️' : '🌤️'}} {{place.weather.text}} {{place.weather.tempMin}}~{{place.weather.tempMax}}°C | 💧{{place.weather.humidity}}% | {{place.weather.windDir}}{{place.weather.windScale}}级
+                </view>
+                <view class="place-location" wx:if="{{place.latitude}}" catchtap="onOpenMap" data-lat="{{place.latitude}}" data-lng="{{place.longitude}}" data-name="{{place.name}}" data-address="{{place.address}}"><text class="svg-inline-icon icon-map"></text>查看位置</view>
+              </view>
+              <view class="place-right">
+                <view class="place-photo-badge" wx:if="{{place.photo_count > 0}}">📷 {{place.photo_count}}</view>
+                <view class="place-order-btns" catchtap="stopBubble">
+                  <view class="order-btn" catchtap="onMoveUp" data-day-id="{{item.id}}" data-place-id="{{place.id}}" data-index="{{pIdx}}">↑</view>
+                  <view class="order-btn" catchtap="onMoveDown" data-day-id="{{item.id}}" data-place-id="{{place.id}}" data-index="{{pIdx}}" data-total="{{item.places.length}}">↓</view>
+                </view>
+              </view>
+            </view>
+          </view>
+
+          <!-- 添加地点按钮 -->
+          <view class="add-place-btn" bindtap="onAddPlace" data-day-id="{{item.id}}" wx:if="{{isCreator}}">
+            <text>+ 添加打卡地点</text>
+          </view>
         </view>
       </view>
-      <view class="comment-empty" wx:if="{{comments.length === 0}}">
-        <text>还没有评论，来说点什么吧~</text>
-      </view>
     </view>
+  </block>
+</view>
+
+<!-- 邀请二维码弹窗 (含行程名、时间、长按保存/发送与分享给好友) -->
+<view class="invite-overlay" wx:if="{{showInviteModal}}" bindtap="onCloseInvite">
+  <view class="invite-modal" catchtap="stopBubble">
+    <view class="invite-header-title"><text class="svg-inline-icon icon-mail"></text> 邀请队友加入行程</view>
+
+    <!-- 行程名称与时间区间 -->
+    <view class="invite-trip-info-box">
+      <view class="invite-trip-name">{{trip.title}}</view>
+      <view class="invite-trip-dates"><text class="svg-inline-icon icon-calendar"></text> {{trip.start_date}} ~ {{trip.end_date}}</view>
+    </view>
+
+    <!-- 二维码图片 (可长按保存/发送) -->
+    <image class="invite-qrcode" src="{{inviteQrCodeUrl}}" mode="aspectFit" wx:if="{{inviteQrCodeUrl}}" show-menu-by-longpress="{{true}}"></image>
+    <view class="invite-loading" wx:else>二维码生成中...</view>
+
+    <view class="invite-longpress-tip"><text class="svg-inline-icon icon-info"></text> 长按二维码可保存到相册或发送给好友（4小时内有效）</view>
+
+    <button class="btn-primary invite-close-btn" bindtap="onCloseInvite">我知道了</button>
   </view>
 </view>
 
-<!-- 海报画布（隐藏） -->
-<canvas type="2d" id="posterCanvas" style="position:fixed;left:-9999px;width:750px;height:1200px;"></canvas>
+<!-- 头像高清全屏放大弹窗 (极速加载，绝不转圈) -->
+<view class="avatar-preview-overlay" wx:if="{{previewAvatarUrl}}" bindtap="closeAvatarPreview">
+  <image class="avatar-preview-img" src="{{previewAvatarUrl}}" mode="aspectFit" catchtap="stopBubble"></image>
+  <view class="avatar-preview-tip">点击任意空白处关闭</view>
+</view>

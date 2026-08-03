@@ -9,13 +9,34 @@ Page({
     startDate: '',
     endDate: '',
     membersCount: '1',
-    note: ''
+    note: '',
+    statusBarHeight: 20,
+    navHeight: 44
   },
 
   onLoad(options) {
+    try {
+      const systemInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync()
+      const menuButton = wx.getMenuButtonBoundingClientRect()
+      const statusBarHeight = systemInfo.statusBarHeight || 20
+      const navHeight = menuButton ? (menuButton.top - statusBarHeight) * 2 + menuButton.height : 44
+      this.setData({ statusBarHeight, navHeight })
+    } catch (e) {
+      this.setData({ statusBarHeight: 20, navHeight: 44 })
+    }
+
     if (options.id) {
       this.setData({ isEdit: true, tripId: options.id })
       this.loadTrip()
+    }
+  },
+
+  onNavBack() {
+    const pages = getCurrentPages()
+    if (pages.length > 1) {
+      wx.navigateBack({ delta: 1 })
+    } else {
+      wx.switchTab({ url: '/pages/index/index' })
     }
   },
 

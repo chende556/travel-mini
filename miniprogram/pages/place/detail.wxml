@@ -2,27 +2,46 @@
 <view class="container">
   <!-- 地点信息 -->
   <view class="place-header card">
-    <view class="place-type">{{place.type_display}}</view>
+    <view class="place-type-badge">{{place.type_display}}</view>
     <view class="place-name">{{place.name}}</view>
-    <view class="place-map-btn" wx:if="{{place.latitude}}" bindtap="onOpenMap">🗺️ 查看地图位置</view>
-    <view class="place-address" wx:if="{{place.address}}">📍 {{place.address}}</view>
-    <!-- 天气预报 -->
-    <view class="place-weather" wx:if="{{weather.text}}">
-      {{weather.text == '晴' ? '☀️' : weather.text == '多云' ? '⛅' : weather.text == '阴' ? '☁️' : weather.text == '小雨' ? '🌦️' : weather.text == '中雨' ? '🌧️' : weather.text == '大雨' ? '🌧️' : weather.text == '暴雨' ? '⛈️' : weather.text == '雷阵雨' ? '⛈️' : weather.text == '小雪' ? '🌨️' : weather.text == '雾' ? '🌫️' : '🌤️'}} {{weather.text}} {{weather.tempMin}}~{{weather.tempMax}}°C | 💧{{weather.humidity}}% | {{weather.windDir}} {{weather.windScale}}级 | UV {{weather.uvIndex}}
+    <view class="place-map-btn" wx:if="{{place.latitude}}" bindtap="onOpenMap"><text class="svg-inline-icon icon-map"></text>查看地图位置</view>
+    <view class="place-address" wx:if="{{place.address}}"><text class="svg-inline-icon icon-pin"></text>{{place.address}}</view>
+    
+    <!-- 精致莫兰迪天气预报卡片 -->
+    <view class="weather-card-box" wx:if="{{weather.text}}">
+      <view class="weather-main-row">
+        <text class="weather-text">{{weather.text}}</text>
+        <text class="weather-temp">{{weather.tempMin}}~{{weather.tempMax}}°C</text>
+      </view>
+      <view class="weather-meta-row">
+        <view class="weather-chip">
+          <text class="svg-inline-icon icon-droplet"></text>
+          <text>湿度 {{weather.humidity}}%</text>
+        </view>
+        <view class="weather-chip">
+          <text class="svg-inline-icon icon-wind"></text>
+          <text>{{weather.windDir}} {{weather.windScale}}级</text>
+        </view>
+        <view class="weather-chip" wx:if="{{weather.uvIndex}}">
+          <text class="svg-inline-icon icon-sun"></text>
+          <text>UV {{weather.uvIndex}}</text>
+        </view>
+      </view>
     </view>
-    <view class="place-time" wx:if="{{place.start_time}}">🕐 {{place.start_time}} {{place.end_time ? ' ~ ' + place.end_time : ''}}</view>
-    <view class="place-cost" wx:if="{{place.cost}}">💰 ¥{{place.cost}}</view>
+
+    <view class="place-time" wx:if="{{place.start_time}}"><text class="svg-inline-icon icon-clock"></text>{{place.start_time}}{{place.end_time ? ' ~ ' + place.end_time : ''}}</view>
+    <view class="place-cost" wx:if="{{place.cost}}"><text class="svg-inline-icon icon-wallet"></text>¥{{place.cost}}</view>
     <view class="place-note" wx:if="{{place.note}}">{{place.note}}</view>
     <view class="place-actions">
-      <view class="action-btn" bindtap="onEditPlace">✏️ 编辑</view>
-      <view class="action-btn danger" bindtap="onDeletePlace">🗑️ 删除</view>
+      <view class="action-btn" bindtap="onEditPlace"><text class="svg-inline-icon icon-edit"></text>编辑</view>
+      <view class="action-btn danger" bindtap="onDeletePlace"><text class="svg-inline-icon icon-trash"></text>删除</view>
     </view>
   </view>
 
   <!-- 照片墙 -->
-  <view class="photo-section">
+  <view class="photo-section card">
     <view class="section-header">
-      <text class="section-title">📷 照片 ({{photos.length}})</text>
+      <text class="section-title"><text class="svg-inline-icon icon-camera"></text>照片墙 ({{photos.length}})</text>
       <view class="upload-btn" bindtap="onUploadPhoto">上传照片</view>
     </view>
 

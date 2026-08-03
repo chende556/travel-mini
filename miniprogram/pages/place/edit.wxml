@@ -5,34 +5,94 @@
     <view class="form-item">
       <text class="form-label">类型 *</text>
       <view class="type-selector">
-        <view class="type-option {{type === 'hotel' ? 'active' : ''}}" bindtap="onSelectType" data-type="hotel">🏨 酒店</view>
-        <view class="type-option {{type === 'scenic' ? 'active' : ''}}" bindtap="onSelectType" data-type="scenic">🏞️ 景点</view>
-        <view class="type-option {{type === 'restaurant' ? 'active' : ''}}" bindtap="onSelectType" data-type="restaurant">🍽️ 餐厅</view>
-        <view class="type-option {{type === 'transport' ? 'active' : ''}}" bindtap="onSelectType" data-type="transport">🚗 交通</view>
-        <view class="type-option {{type === 'other' ? 'active' : ''}}" bindtap="onSelectType" data-type="other">🛍️ 其他</view>
+        <view class="type-card {{type === 'hotel' ? 'active' : ''}}" bindtap="onSelectType" data-type="hotel">
+          <view class="svg-icon icon-hotel"></view>
+          <text class="type-name">酒店住宿</text>
+        </view>
+        <view class="type-card {{type === 'scenic' ? 'active' : ''}}" bindtap="onSelectType" data-type="scenic">
+          <view class="svg-icon icon-scenic"></view>
+          <text class="type-name">景点打卡</text>
+        </view>
+        <view class="type-card {{type === 'restaurant' ? 'active' : ''}}" bindtap="onSelectType" data-type="restaurant">
+          <view class="svg-icon icon-restaurant"></view>
+          <text class="type-name">美食餐厅</text>
+        </view>
+        <view class="type-card {{(type === 'drive' || type === 'transport') ? 'active' : ''}}" bindtap="onSelectType" data-type="drive">
+          <view class="svg-icon icon-transport"></view>
+          <text class="type-name">自驾</text>
+        </view>
+        <view class="type-card {{type === 'flight' ? 'active' : ''}}" bindtap="onSelectType" data-type="flight">
+          <view class="svg-icon icon-flight"></view>
+          <text class="type-name">飞机</text>
+        </view>
+        <view class="type-card {{type === 'train' ? 'active' : ''}}" bindtap="onSelectType" data-type="train">
+          <view class="svg-icon icon-train"></view>
+          <text class="type-name">火车</text>
+        </view>
+        <view class="type-card {{type === 'other' ? 'active' : ''}}" bindtap="onSelectType" data-type="other">
+          <view class="svg-icon icon-other"></view>
+          <text class="type-name">其他体验</text>
+        </view>
       </view>
     </view>
 
     <!-- 名称 -->
     <view class="form-item">
       <text class="form-label">名称 *</text>
-      <input class="form-input" placeholder="如：东京塔" value="{{name}}" bindinput="onInputName" />
+      <input class="form-input" placeholder="如：长沙" value="{{name}}" bindinput="onInputName" />
     </view>
 
-    <!-- 地址 -->
-    <view class="form-item">
-      <text class="form-label">地址</text>
-      <input class="form-input" placeholder="详细地址" value="{{address}}" bindinput="onInputAddress" />
-    </view>
-
-    <!-- 地图选点 -->
-    <view class="form-item">
-      <view class="location-btn" bindtap="onChooseLocation">
-        <text>📍 {{latitude ? '已选择位置' : '选择地图位置'}}</text>
-        <text class="arrow" wx:if="{{!latitude}}">></text>
-        <text class="location-clear" wx:if="{{latitude}}" catchtap="onClearLocation">✕</text>
+    <!-- 自驾 / 飞机 / 火车 专属：出发地、目的地、距离 -->
+    <block wx:if="{{type === 'drive' || type === 'transport' || type === 'flight' || type === 'train'}}">
+      <!-- 出发地 -->
+      <view class="form-item">
+        <text class="form-label">出发地 *</text>
+        <view class="transport-location-row">
+          <input class="form-input transport-input" placeholder="如：西安" value="{{startLocation}}" bindinput="onInputStartLocation" />
+          <view class="location-pick-btn {{startLatitude ? 'picked' : ''}}" bindtap="onChooseStartLocation">
+            <text class="svg-inline-icon icon-pin"></text>{{startLatitude ? '已选' : '选择位置'}}
+          </view>
+        </view>
       </view>
-    </view>
+
+      <!-- 目的地 -->
+      <view class="form-item">
+        <text class="form-label">目的地 *</text>
+        <view class="transport-location-row">
+          <input class="form-input transport-input" placeholder="如：长沙" value="{{endLocation}}" bindinput="onInputEndLocation" />
+          <view class="location-pick-btn {{endLatitude ? 'picked' : ''}}" bindtap="onChooseEndLocation">
+            <text class="svg-inline-icon icon-pin"></text>{{endLatitude ? '已选' : '选择位置'}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 距离 -->
+      <view class="form-item">
+        <text class="form-label">距离</text>
+        <view class="distance-input-row">
+          <input class="form-input distance-input" type="digit" placeholder="自动估算或手动输入" value="{{distanceKm}}" bindinput="onInputDistanceKm" />
+          <text class="distance-unit">km</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 普通地点专属：地址 & 地图选点 (自驾/飞机/火车自动隐藏) -->
+    <block wx:else>
+      <!-- 地址 -->
+      <view class="form-item">
+        <text class="form-label">地址</text>
+        <input class="form-input" placeholder="详细地址" value="{{address}}" bindinput="onInputAddress" />
+      </view>
+
+      <!-- 地图选点 -->
+      <view class="form-item">
+        <view class="location-btn" bindtap="onChooseLocation">
+          <text><text class="svg-inline-icon icon-pin"></text>{{latitude ? '已选择位置' : '选择地图位置'}}</text>
+          <text class="arrow" wx:if="{{!latitude}}">></text>
+          <text class="location-clear" wx:if="{{latitude}}" catchtap="onClearLocation">✕</text>
+        </view>
+      </view>
+    </block>
 
     <!-- 时间 -->
     <view class="form-item form-row">

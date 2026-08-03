@@ -1,391 +1,505 @@
-/* 行程列表页样式 */
+/* 页面全局背景 (莫兰迪暖米色) */
+page {
+  background-color: #fdfbf7;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+/* 微型矢量 SVG 图标 */
+.svg-inline-icon {
+  display: inline-block;
+  width: 26rpx;
+  height: 26rpx;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: -2rpx;
+  margin-right: 6rpx;
+  flex-shrink: 0;
+}
+
+.icon-user {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+}
+.icon-calendar {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='4' rx='2' ry='2'/%3E%3Cline x1='16' x2='16' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='2' y2='6'/%3E%3Cline x1='3' x2='21' y1='10' y2='10'/%3E%3C/svg%3E");
+}
+
+.icon-clock {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E");
+}
+
+.icon-rocket {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z'/%3E%3Cpath d='m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z'/%3E%3Cpath d='M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0'/%3E%3Cpath d='M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5'/%3E%3C/svg%3E");
+}
+
+.icon-mail {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234078F0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='16' x='2' y='4' rx='2'/%3E%3Cpath d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'/%3E%3C/svg%3E");
+}
+
+/* 1. 自定义顶部导航栏 (标准32rpx字号: 我的行程本) */
+.custom-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: #fdfbf7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+}
+
+.custom-nav-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #111827;
+  letter-spacing: 0.5rpx;
+}
+
+.main-page {
+  padding: 20rpx 28rpx 60rpx 28rpx;
+}
+
+/* 未登录提示 */
 .login-tip {
   display: flex;
   justify-content: center;
   padding: 200rpx 40rpx;
 }
 
-/* 行程卡片 */
-.trip-card {
-  background: #fff;
-  border-radius: 20rpx;
-  overflow: hidden;
+/* 2. 双切换标签：[ 我发起的 ] [ 我参与的 ] */
+.segmented-tabs-container {
+  display: flex;
+  background: #ffffff;
+  border-radius: 40rpx;
+  padding: 8rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.03);
 }
 
-.trip-cover {
-  width: 100%;
-  height: 220rpx;
-}
-
-/* 成员封面 */
-.members-cover {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  height: auto;
-  padding: 30rpx 20rpx;
-}
-
-.members-row {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-}
-
-.member-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4rpx;
-}
-
-.member-avatar {
-  width: 84rpx;
-  height: 84rpx;
-  border-radius: 50%;
-  border: 3rpx solid rgba(255, 255, 255, 0.8);
-}
-
-.member-name {
-  font-size: 20rpx;
-  color: #fff;
-  font-weight: bold;
-}
-
-.member-role {
-  font-size: 18rpx;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* 行程信息 */
-.trip-info {
-  padding: 24rpx;
-}
-
-.trip-title {
-  font-size: 34rpx;
-  font-weight: bold;
-  color: #1a1a1a;
-  margin-bottom: 10rpx;
-}
-
-.trip-subtitle {
-  display: flex;
-  flex-direction: column;
-  gap: 4rpx;
-  font-size: 24rpx;
-  color: #888;
-  margin-bottom: 16rpx;
-}
-
-.trip-date {
-  color: #aaa;
-}
-
-/* 倒计时 */
-.countdown {
-  display: flex;
-  align-items: baseline;
-  padding: 18rpx 24rpx;
-  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-  border-radius: 12rpx;
-  margin-bottom: 20rpx;
-}
-
-.countdown-num {
-  font-size: 56rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-right: 10rpx;
-}
-
-.countdown-text {
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.countdown-now {
-  background: linear-gradient(135deg, #f9ca24, #f0932b);
-}
-
-.countdown-done {
-  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-}
-
-.countdown-done .countdown-text {
-  font-size: 26rpx;
-}
-
-/* 费用区 */
-.cost-section {
-  background: #fafafa;
-  border-radius: 12rpx;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-}
-
-.cost-header {
-  display: flex;
-  align-items: baseline;
-  gap: 16rpx;
-  margin-bottom: 12rpx;
-}
-
-.cost-total {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #e64340;
-}
-
-.cost-avg {
-  font-size: 22rpx;
-  color: #999;
-}
-
-.cost-types {
-  border-top: 1rpx solid #eee;
-  padding-top: 12rpx;
-}
-
-.cost-type-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8rpx 0;
-}
-
-.cost-type-label {
-  font-size: 24rpx;
-  color: #666;
-}
-
-.cost-type-amount {
-  font-size: 24rpx;
-  color: #333;
+.segmented-tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 28rpx;
+  color: #6b7280;
+  border-radius: 32rpx;
+  transition: all 0.25s ease;
   font-weight: 500;
 }
 
-.cost-more-row {
-  margin-top: 12rpx;
-  text-align: right;
+.segmented-tab.active {
+  background: #8eaec7;
+  color: #ffffff;
+  font-weight: bold;
+  box-shadow: 0 4rpx 12rpx rgba(142, 174, 199, 0.35);
 }
 
-.cost-more {
-  font-size: 22rpx;
-  color: #07c160;
-}
-
-/* 快捷入口 */
-.quick-links {
+/* 3. 搜索与新建行 */
+.search-create-row {
   display: flex;
+  align-items: center;
   gap: 16rpx;
-  margin-bottom: 20rpx;
+  margin-bottom: 28rpx;
 }
 
-.quick-link {
+.search-input-box {
   flex: 1;
-  text-align: center;
-  font-size: 22rpx;
-  color: #666;
-  background: #f5f5f5;
-  padding: 14rpx 0;
-  border-radius: 8rpx;
-}
-
-/* 照片精选 */
-.trip-photos {
-  border-top: 1rpx solid #f0f0f0;
-  padding-top: 16rpx;
-}
-
-.photos-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12rpx;
+  background: #ffffff;
+  border-radius: 36rpx;
+  padding: 14rpx 24rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.02);
 }
 
-.photos-title {
+.search-icon {
+  font-size: 26rpx;
+  margin-right: 12rpx;
+  color: #9ca3af;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 26rpx;
+  color: #1f2937;
+}
+
+.clear-icon {
   font-size: 24rpx;
-  color: #999;
+  color: #9ca3af;
+  padding: 0 8rpx;
 }
 
-.photos-grid {
+.quick-add-btn {
+  background: #8eaec7;
+  color: #ffffff;
+  font-size: 26rpx;
+  font-weight: bold;
+  padding: 16rpx 32rpx;
+  border-radius: 36rpx;
+  box-shadow: 0 4rpx 12rpx rgba(142, 174, 199, 0.3);
+  white-space: nowrap;
+}
+
+/* 4. 行程卡片列表 (莫兰迪鼠尾草绿) */
+.trip-list-v2 {
   display: flex;
-  gap: 8rpx;
+  flex-direction: column;
+  gap: 28rpx;
 }
 
-.photo-thumb {
-  position: relative;
-  width: 150rpx;
-  height: 150rpx;
-  border-radius: 8rpx;
+.trip-card-v2 {
+  background: #ffffff;
+  border-radius: 28rpx;
   overflow: hidden;
+  box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease;
 }
 
-.photo-thumb image {
-  width: 100%;
-  height: 100%;
+/* 卡片盖板上半部分 (默认莫兰迪绿) */
+.card-cover-banner {
+  height: 210rpx;
+  background: #a3b899;
+  position: relative;
+  padding: 20rpx 24rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.photo-tag {
+/* 已完成行程：优雅莫兰迪暮色蓝/回忆灰蓝盖板 */
+.card-cover-banner.completed-cover {
+  background: linear-gradient(135deg, #7c93a4 0%, #9cb1c3 100%);
+}
+
+.status-badge {
+  align-self: flex-start;
+  font-size: 22rpx;
+  padding: 6rpx 20rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.88);
+  color: #436037;
+  font-weight: bold;
+}
+
+.status-badge.ongoing {
+  background: rgba(254, 243, 199, 0.95);
+  color: #92400e;
+}
+
+.status-badge.completed {
+  background: rgba(243, 244, 246, 0.9);
+  color: #6b7280;
+}
+
+.duration-badge {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 18rpx;
-  text-align: center;
-  padding: 3rpx 0;
+  top: 20rpx;
+  right: 24rpx;
+  background: rgba(255, 255, 255, 0.92);
+  color: #374151;
+  font-size: 22rpx;
+  font-weight: bold;
+  padding: 6rpx 18rpx;
+  border-radius: 24rpx;
 }
 
-/* 新建行程按钮 */
-.add-btn {
+.cover-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.avatar-stack {
+  display: flex;
+  align-items: center;
+}
+
+.member-avatar-mini {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 26rpx;
+  border: 3rpx solid #ffffff;
+  margin-left: -14rpx;
+}
+
+.member-avatar-mini:first-child {
+  margin-left: 0;
+}
+
+.avatar-add-btn {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 26rpx;
+  background: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
-  border: 2rpx dashed #ccc;
-  border-radius: 16rpx;
-  padding: 28rpx;
-  margin-top: 10rpx;
-  color: #999;
-  font-size: 28rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  border: 3rpx solid rgba(255, 255, 255, 0.8);
+  margin-left: -14rpx;
 }
 
-.add-icon {
-  font-size: 36rpx;
-  margin-right: 10rpx;
+/* 卡片白底信息区 */
+.card-info-body {
+  padding: 24rpx 28rpx;
 }
 
-/* 空状态 */
-.empty-state {
-  text-align: center;
-  padding: 100rpx;
-  color: #999;
+.info-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
 }
 
-/* 头像大图预览 */
-.preview-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+.trip-title-v2 {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #111827;
+}
+
+.memory-btn-pill {
+  font-size: 22rpx;
+  font-weight: bold;
+  color: #5c7485;
+  background: #eef3f7;
+  padding: 8rpx 20rpx;
+  border-radius: 28rpx;
+  border: 1rpx solid #d0deea;
+  box-shadow: 0 2rpx 8rpx rgba(124, 147, 164, 0.15);
+  transition: all 0.2s ease;
+}
+
+.share-circle-btn {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 26rpx;
+  background: #f3f4f6;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  font-size: 24rpx;
 }
 
-.preview-image {
-  width: 80%;
-  height: 80%;
+.info-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  font-size: 24rpx;
+  color: #9ca3af;
+  flex-wrap: wrap;
 }
 
-/* 选择昵称弹窗 */
-.nickname-overlay {
+.meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.countdown-tag {
+  color: #f97316;
+  font-weight: 600;
+}
+
+.ongoing-tag {
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* 首次登录弹窗 */
+.nickname-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 998;
 }
 
-.nickname-modal {
+.nickname-modal-card {
   background: #fff;
-  border-radius: 20rpx;
-  padding: 40rpx;
   width: 80%;
+  border-radius: 24rpx;
+  padding: 40rpx;
   text-align: center;
 }
 
-.nickname-title {
-  font-size: 36rpx;
+.modal-title {
+  font-size: 32rpx;
   font-weight: bold;
-  color: #1a1a1a;
   margin-bottom: 10rpx;
 }
 
-.nickname-subtitle {
+.modal-sub {
   font-size: 24rpx;
-  color: #999;
+  color: #888;
   margin-bottom: 30rpx;
 }
 
-.nickname-list {
+.avatar-choose-btn {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
-}
-
-.nickname-item {
-  display: flex;
   align-items: center;
-  gap: 20rpx;
-  padding: 20rpx 24rpx;
-  background: #f8f8f8;
-  border-radius: 12rpx;
-  font-size: 30rpx;
-  color: #333;
-  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 24rpx;
+  line-height: normal;
 }
 
-.nickname-item:active {
-  background: #e6f7ef;
-  color: #07c160;
+.avatar-choose-btn::after {
+  display: none;
 }
 
-.nickname-avatar {
-  width: 72rpx;
-  height: 72rpx;
+.avatar-preview-circle {
+  width: 120rpx;
+  height: 120rpx;
   border-radius: 50%;
-}
-
-/* 注意事项 */
-.notice-section {
-  background: #fff8e6;
-  border: 2rpx solid #ffe58f;
-  border-radius: 12rpx;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-}
-
-.notice-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  border: 3rpx solid #e5e7eb;
   margin-bottom: 10rpx;
 }
 
-.notice-title {
-  font-size: 26rpx;
-  font-weight: bold;
-  color: #d48806;
-}
-
-.notice-edit {
+.avatar-choose-text {
   font-size: 22rpx;
-  color: #d48806;
+  color: #8eaec7;
 }
 
-.notice-content {
-  font-size: 26rpx;
-  color: #874d00;
-  line-height: 1.8;
-  white-space: pre-wrap;
+.nickname-input {
+  background: #f5f5f5;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  margin-bottom: 30rpx;
 }
 
-.notice-empty {
+.modal-save-btn {
+  width: 100%;
+}
+
+/* 邀请弹窗 */
+.invite-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.invite-modal {
+  background: #ffffff;
+  width: 82%;
+  border-radius: 32rpx;
+  padding: 44rpx 36rpx;
+  text-align: center;
+  box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.2);
+}
+
+.invite-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 20rpx;
+}
+
+.invite-trip-info {
+  background: #fdfbf7;
+  border: 1rpx solid #e2d9cf;
+  border-radius: 20rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 28rpx;
+}
+
+.invite-trip-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #2c3e2e;
+  margin-bottom: 8rpx;
+}
+
+.invite-trip-dates {
   font-size: 24rpx;
-  color: #d4b106;
+  color: #8eaec7;
+  font-weight: bold;
+}
+
+.invite-tip {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-bottom: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-info {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E");
+}
+
+.invite-qrcode {
+  width: 400rpx;
+  height: 400rpx;
+  margin: 0 auto 16rpx auto;
+  display: block;
+}
+
+.invite-loading {
+  padding: 80rpx 0;
+  color: #9ca3af;
+  font-size: 26rpx;
+}
+
+.invite-close-btn {
+  width: 100% !important;
+  background: #8eaec7 !important;
+  color: #ffffff !important;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}
+
+/* 空状态美化 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 40rpx;
+}
+
+.empty-state .icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-state .text {
+  font-size: 28rpx;
+  color: #9ca3af;
+  display: block;
+}
+
+.btn-create-empty {
+  margin-top: 36rpx;
+  background: #8eaec7;
+  color: #ffffff;
+  padding: 22rpx 60rpx;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+  font-weight: bold;
+  box-shadow: 0 8rpx 20rpx rgba(142, 174, 199, 0.35);
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.btn-create-empty:active {
+  transform: scale(0.98);
+  opacity: 0.9;
 }

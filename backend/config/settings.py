@@ -11,9 +11,17 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key")
-DEBUG = os.getenv("DEBUG", "True") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "")
+if not SECRET_KEY:
+    if os.getenv("DEBUG", "False") == "True":
+        SECRET_KEY = "dev-secret-key-do-not-use-in-production"
+    else:
+        raise RuntimeError("DJANGO_SECRET_KEY 环境变量未设置，生产环境必须配置")
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h.strip()]
+if DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 # WeChat Mini Program
 WECHAT_APP_ID = os.getenv("WECHAT_APP_ID", "")
@@ -86,8 +94,28 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# 站点域名（用于拼接媒体文件完整 URL）
+# 站点域名（用于拼接本地媒体文件完整 URL）
 SITE_URL = os.getenv("SITE_URL", "http://127.0.0.1:8000")
+
+# 阿里云 OSS
+OSS_ACCESS_KEY_ID = os.getenv("OSS_ACCESS_KEY_ID", "")
+OSS_ACCESS_KEY_SECRET = os.getenv("OSS_ACCESS_KEY_SECRET", "")
+OSS_BUCKET_NAME = os.getenv("OSS_BUCKET_NAME", "")
+OSS_ENDPOINT = os.getenv("OSS_ENDPOINT", "")
+
+if OSS_ACCESS_KEY_ID and OSS_ACCESS_KEY_SECRET and OSS_BUCKET_NAME:
+    STORAGES = {
+        "default": {
+            "BACKEND": "trips.storage.OSS2Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+    ALIYUN_OSS_ACCESS_KEY_ID = OSS_ACCESS_KEY_ID
+    ALIYUN_OSS_ACCESS_KEY_SECRET = OSS_ACCESS_KEY_SECRET
+    ALIYUN_OSS_BUCKET_NAME = OSS_BUCKET_NAME
+    ALIYUN_OSS_ENDPOINT = OSS_ENDPOINT
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

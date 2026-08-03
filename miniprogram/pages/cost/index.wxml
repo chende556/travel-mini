@@ -19,7 +19,7 @@
   <view class="category-list">
     <view class="category-card card" wx:for="{{categories}}" wx:key="type">
       <view class="category-header">
-        <text class="category-icon">{{item.type === 'hotel' ? '🏨' : item.type === 'scenic' ? '🏞️' : item.type === 'restaurant' ? '🍽️' : item.type === 'transport' ? '🚗' : '🛍️'}}</text>
+        <view class="category-icon {{item.type || 'other'}}"></view>
         <text class="category-name">{{item.type_name}}</text>
         <text class="category-total">¥{{item.total}}</text>
       </view>

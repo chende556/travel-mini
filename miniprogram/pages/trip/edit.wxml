@@ -1,49 +1,76 @@
-<!-- 创建/编辑行程 -->
+<!-- 自定义顶部导航栏 (含返回按钮) -->
+<view class="custom-nav-bar" style="padding-top: {{statusBarHeight || 20}}px; height: {{navHeight || 44}}px;">
+  <view class="nav-back-btn" bindtap="onNavBack">‹ 返回</view>
+  <view class="custom-nav-title">{{isEdit ? '编辑行程' : '新建行程'}}</view>
+</view>
+<view style="height: {{(statusBarHeight || 20) + (navHeight || 44)}}px;"></view>
+
 <view class="container">
-  <view class="form card">
+  <view class="form-card">
     <!-- 行程名称 -->
     <view class="form-item">
-      <text class="form-label">行程名称 *</text>
-      <input class="form-input" placeholder="如：东京五日游" value="{{title}}" bindinput="onInputTitle" />
+      <view class="form-label-row">
+        <text class="form-label-icon">✈️</text>
+        <text class="form-label">行程名称</text>
+        <text class="required-star">*</text>
+      </view>
+      <input class="form-input" placeholder="如：云南大理双廊7日游" value="{{title}}" bindinput="onInputTitle" placeholder-class="input-placeholder" />
     </view>
 
     <!-- 目的地 -->
     <view class="form-item">
-      <text class="form-label">目的地</text>
-      <input class="form-input" placeholder="如：日本东京" value="{{destination}}" bindinput="onInputDestination" />
+      <view class="form-label-row">
+        <text class="form-label-icon">📍</text>
+        <text class="form-label">目的地</text>
+      </view>
+      <input class="form-input" placeholder="如：大理、丽江、香格里拉" value="{{destination}}" bindinput="onInputDestination" placeholder-class="input-placeholder" />
     </view>
 
     <!-- 开始日期 -->
     <view class="form-item">
-      <text class="form-label">开始日期 *</text>
+      <view class="form-label-row">
+        <text class="form-label-icon">🗓️</text>
+        <text class="form-label">开始日期</text>
+        <text class="required-star">*</text>
+      </view>
       <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
-        <view class="form-picker">{{startDate || '请选择'}}</view>
+        <view class="form-picker {{startDate ? 'selected' : ''}}">{{startDate || '点击选择开始日期'}}</view>
       </picker>
     </view>
 
     <!-- 结束日期 -->
     <view class="form-item">
-      <text class="form-label">结束日期 *</text>
+      <view class="form-label-row">
+        <text class="form-label-icon">🏁</text>
+        <text class="form-label">结束日期</text>
+        <text class="required-star">*</text>
+      </view>
       <picker mode="date" value="{{endDate}}" start="{{startDate}}" bindchange="onEndDateChange">
-        <view class="form-picker">{{endDate || '请选择'}}</view>
+        <view class="form-picker {{endDate ? 'selected' : ''}}">{{endDate || '点击选择结束日期'}}</view>
       </picker>
     </view>
 
-    <!-- 备注 -->
+    <!-- 出行人数 -->
     <view class="form-item">
-      <text class="form-label">出行人数</text>
-      <input class="form-input" type="number" placeholder="1" value="{{membersCount}}" bindinput="onInputMembersCount" />
+      <view class="form-label-row">
+        <text class="form-label-icon">👤</text>
+        <text class="form-label">预计出行人数</text>
+      </view>
+      <input class="form-input" type="number" placeholder="1" value="{{membersCount}}" bindinput="onInputMembersCount" placeholder-class="input-placeholder" />
     </view>
 
     <!-- 备注 -->
     <view class="form-item">
-      <text class="form-label">备注</text>
-      <textarea class="form-textarea" placeholder="行程备注..." value="{{note}}" bindinput="onInputNote" />
+      <view class="form-label-row">
+        <text class="form-label-icon">📝</text>
+        <text class="form-label">行程备注 / 注意事项</text>
+      </view>
+      <textarea class="form-textarea" placeholder="填写注意事项或打卡安排..." value="{{note}}" bindinput="onInputNote" placeholder-class="input-placeholder" />
     </view>
-  </view>
 
-  <!-- 提交按钮 -->
-  <view class="btn-primary submit-btn" bindtap="onSubmit">
-    {{isEdit ? '保存修改' : '创建行程'}}
+    <!-- 提交按钮 -->
+    <view class="submit-btn" bindtap="onSubmit">
+      {{isEdit ? '保存修改' : '确认创建行程'}}
+    </view>
   </view>
 </view>

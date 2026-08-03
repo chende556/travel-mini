@@ -1,0 +1,130 @@
+<!-- 自定义顶部导航栏 (游记动态) -->
+<view class="custom-nav-bar" style="padding-top: {{statusBarHeight || 20}}px; height: {{navHeight || 44}}px;">
+  <view class="custom-nav-title">游记动态</view>
+</view>
+<view style="height: {{(statusBarHeight || 20) + (navHeight || 44)}}px;"></view>
+
+<!-- 游记/朋友圈动态列表 -->
+<view class="container">
+  <!-- 顶部发布卡片/按钮 -->
+  <view class="publish-header card" bindtap="onOpenPublish">
+    <image class="my-avatar" src="{{userInfo.avatar_url || '/images/default-avatar.jpg'}}" mode="aspectFill"></image>
+    <view class="publish-placeholder">分享此刻的美景、美食或趣事...</view>
+    <view class="publish-btn">📷 发布</view>
+  </view>
+
+  <!-- 动态列表 (类似朋友圈/小红书) -->
+  <view class="moments-list">
+    <view class="moment-item card" wx:for="{{moments}}" wx:key="id">
+      <!-- 头部：发布者信息与隐私状态 -->
+      <view class="moment-author-row">
+        <image class="author-avatar" src="{{item.avatar_url || '/images/default-avatar.jpg'}}" mode="aspectFill"></image>
+        <view class="author-info">
+          <text class="author-name">{{item.nickname || '队友'}}</text>
+          <text class="moment-time">{{item.created_at_fmt || item.created_at}}</text>
+        </view>
+        <view class="privacy-badge">🔒 {{item.trip_title || '所有队友'}}可见</view>
+      </view>
+
+      <!-- 文字内容 -->
+      <view class="moment-content" wx:if="{{item.content}}">
+        <text>{{item.content}}</text>
+      </view>
+
+      <!-- 图片网格 (1~9张) -->
+      <view class="moment-images grid-{{item.images.length > 4 ? 3 : item.images.length > 1 ? 2 : 1}}" wx:if="{{item.images && item.images.length > 0}}">
+        <image class="moment-img" wx:for="{{item.images}}" wx:for-item="img" wx:for-index="imgIdx" wx:key="*this" src="{{img}}" mode="aspectFill" bindtap="onPreviewImage" data-urls="{{item.images}}" data-current="{{img}}"></image>
+      </view>
+
+      <!-- 位置/打卡标记 -->
+      <view class="moment-location" wx:if="{{item.location}}">
+        <text><text class="svg-inline-icon icon-pin"></text>{{item.location}}</text>
+      </view>
+
+      <!-- 底部互动栏：点赞 & 评论 -->
+      <view class="moment-actions">
+        <view class="action-btn {{item.is_liked ? 'liked' : ''}}" bindtap="onToggleLike" data-id="{{item.id}}" data-index="{{index}}">
+          <text class="svg-inline-icon icon-heart {{item.is_liked ? 'liked' : ''}}"></text>
+          <text class="action-count">{{item.likes_count > 0 ? item.likes_count : '点赞'}}</text>
+        </view>
+        <view class="action-btn" bindtap="onFocusComment" data-id="{{item.id}}" data-index="{{index}}">
+          <text class="svg-inline-icon icon-comment"></text>
+          <text class="action-count">{{item.comments.length > 0 ? item.comments.length : '评论'}}</text>
+        </view>
+        <view class="action-btn owner-btn" bindtap="onEditMoment" data-moment="{{item}}" wx:if="{{item.user === userInfo.id || item.user_id === userInfo.id || (userInfo && item.nickname === userInfo.nickname)}}">
+          <text class="svg-inline-icon icon-edit"></text>
+          <text class="action-count">编辑</text>
+        </view>
+        <view class="action-btn owner-btn danger" bindtap="onDeleteMoment" data-id="{{item.id}}" wx:if="{{item.user === userInfo.id || item.user_id === userInfo.id || (userInfo && item.nickname === userInfo.nickname)}}">
+          <text class="svg-inline-icon icon-trash"></text>
+          <text class="action-count">删除</text>
+        </view>
+      </view>
+
+      <!-- 点赞列表显示 -->
+      <view class="likes-box" wx:if="{{item.liked_nicknames && item.liked_nicknames.length > 0}}">
+        <text class="svg-inline-icon icon-heart liked"></text>
+        <text class="likes-names">{{item.liked_nicknames_str}} 点赞了</text>
+      </view>
+
+      <!-- 评论列表区 -->
+      <view class="comments-box" wx:if="{{item.comments && item.comments.length > 0}}">
+        <view class="comment-row" wx:for="{{item.comments}}" wx:for-item="c" wx:key="id">
+          <text class="comment-author">{{c.nickname}}：</text>
+          <text class="comment-text">{{c.content}}</text>
+        </view>
+      </view>
+
+      <!-- 评论输入框（激活时） -->
+      <view class="comment-input-wrap" wx:if="{{activeCommentId === item.id}}">
+        <input class="comment-input" placeholder="评论这条动态..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="onSubmitComment" data-id="{{item.id}}" focus="{{activeCommentId === item.id}}" />
+        <button class="btn-send-sub" bindtap="onSubmitComment" data-id="{{item.id}}">发送</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{moments.length === 0 && !loading}}">
+    <text>还没有游记动态，快发一条分享给队友吧！</text>
+  </view>
+
+  <!-- 发布游记弹窗 Modal -->
+  <view class="publish-modal-overlay" wx:if="{{showPublishModal}}" bindtap="onClosePublish">
+    <view class="publish-modal card" catchtap="stopBubble">
+      <view class="modal-header">
+        <text class="modal-title">发游记动态 📝</text>
+        <text class="modal-close" bindtap="onClosePublish">✕</text>
+      </view>
+
+      <textarea class="publish-textarea" placeholder="分享美景、美食或此时此刻的心情..." value="{{pubContent}}" bindinput="onPublishContentInput" maxlength="500" adjust-position="{{false}}" cursor-spacing="120" show-confirm-bar="{{false}}"></textarea>
+
+      <!-- 上传图片列表 -->
+      <view class="pub-images-grid">
+        <view class="pub-img-item" wx:for="{{pubImages}}" wx:key="*this">
+          <image src="{{item}}" mode="aspectFill"></image>
+          <text class="del-img-btn" bindtap="onRemovePubImage" data-index="{{index}}">✕</text>
+        </view>
+        <view class="pub-add-btn" bindtap="onChoosePubImage" wx:if="{{pubImages.length < 9}}">
+          <text class="add-icon">+</text>
+          <text class="add-text">添加照片</text>
+        </view>
+      </view>
+
+      <!-- 位置选择 -->
+      <view class="location-picker-row" bindtap="onChooseLocation">
+        <text class="loc-icon">📍</text>
+        <text class="loc-text">{{pubLocation || '添加地点/美食名称'}}</text>
+        <text class="loc-arrow">></text>
+      </view>
+
+      <!-- 可见范围（按行程） -->
+      <view class="visibility-picker-row" bindtap="onChooseVisibility">
+        <text class="loc-icon">🔒</text>
+        <text class="loc-text">{{pubTripTitle || '所有队友可见（点击选择行程）'}}</text>
+        <text class="loc-arrow">></text>
+      </view>
+
+      <button class="btn-primary pub-submit-btn" bindtap="onSubmitPublish" loading="{{submitting}}">发布游记</button>
+    </view>
+  </view>
+</view>
